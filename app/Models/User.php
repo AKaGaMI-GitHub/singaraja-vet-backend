@@ -43,7 +43,7 @@ class User extends Authenticatable
     }
 
     public function user_detail() {
-        return $this->belongsTo(UserDetail::class, 'user_id', 'id');
+        return $this->belongsTo(UserDetail::class, 'id', 'user_id');
     }
 
     public function pets() {
