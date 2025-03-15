@@ -57,7 +57,7 @@ class AuthController extends Controller
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Login!', ['message' => $error->getMessage()], '0');
-            return APIHelpers::responseAPI(['message' => $error->getMessage()], $error->getCode());
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
                 'username' => $user->username,
                 'message' => 'Logout Berhasil!',
             ], '1');
-            
+
             return APIHelpers::responseAPI([
                 'username' => $user->username,
                 'message' => 'Logout Berhasil!',
@@ -86,7 +86,7 @@ class AuthController extends Controller
                 'message' => $error->getMessage(),
             ], '0');
 
-            return APIHelpers::responseAPI(['message' => $error->getMessage()], $error->getCode());
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
 }

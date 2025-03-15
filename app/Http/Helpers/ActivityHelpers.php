@@ -17,12 +17,11 @@ class ActivityHelpers
     {
         LogActivity::create([
             'user_id' => Auth::id() ?? null,
-            'ip_details' => Self::ipNonAPI(),
+            'ip_detail' => json_encode(Self::ipNonAPI(), true),
             'device' => Req::header('User-Agent'),
             'activity' => $activity,
             'status' => $status,
-            'kegiatan' => 'Edit Data Dokumen Peraturan',
-            'detail' => $data
+            'detail' => json_encode($data, true)
         ]);
     }
 
@@ -59,7 +58,6 @@ class ActivityHelpers
         $publicIP = trim(shell_exec("curl ifconfig.co"));
 
         $location = Location::get($publicIP);
-
         if (!$location) {
             return Position::make([
                 'countryName' => 'Private Server',

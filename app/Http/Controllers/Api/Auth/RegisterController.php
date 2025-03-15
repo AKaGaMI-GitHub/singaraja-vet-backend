@@ -47,7 +47,7 @@ class RegisterController extends Controller
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Account!', ['message' => $error->getMessage(), 'data' => $data], '0');
-            return APIHelpers::responseAPI(['message' => $error->getMessage()], $error->getCode());
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
 
     }
@@ -98,7 +98,7 @@ class RegisterController extends Controller
                     'social_media' => json_encode($validate['social_media']),
                 ]
             ], '0');
-            return APIHelpers::responseAPI(['message' => $error->getMessage()], $error->getCode());
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
 }

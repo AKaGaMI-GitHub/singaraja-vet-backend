@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('is_active', ['0', '1']);
             $table->text('avatar')->nullable();
+            $table->enum('is_vet', ['0', '1'])->default(0);
             $table->timestamps();
         });
 

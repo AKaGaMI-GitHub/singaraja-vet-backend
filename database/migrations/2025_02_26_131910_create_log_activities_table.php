@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('log_activities', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
+            $table->integer('user_id')->nullable();
             $table->text('ip_detail');
             $table->string('device');
             $table->string('activity');
