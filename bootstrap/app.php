@@ -25,5 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        if (!config('app.debug')) {
+            $exceptions->respond(function (Throwable $exception) {
+                return view('notfound');;
+            });
+        }
     })->create();

@@ -38,7 +38,7 @@ class AuthController extends Controller
                         'token' => $token,
                     ], '1');
 
-                    return APIHelpers::responseAPI(['data' => [
+                    return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
                         'username' => $user->username,
                         'nama_depan' => $user->nama_depan,
                         'nama_belakang' => $user->nama_belakang,

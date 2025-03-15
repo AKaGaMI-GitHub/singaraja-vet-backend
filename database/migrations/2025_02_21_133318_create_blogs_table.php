@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('tags');
             $table->integer('views');
             $table->integer('likes');
+            $table->string('slug');
             $table->timestamps();
         });
     }

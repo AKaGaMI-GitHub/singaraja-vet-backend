@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
 use App\Models\Blog;
-use App\Models\LogActivity;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class BlogController extends Controller
 {
@@ -19,11 +20,16 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         try {
-            
+
+            Blog::query();
+            Log::info('Berhasil Mendapatkan data Blog! (Admin)');
+
         } catch (Exception $error) {
+            Log::error('Gagal mendapatkan data Blog!');
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Blog! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'error' => $error->getMessage()
-            ], $error->getCode());
+            ], 500);
         }
     }
 
@@ -42,42 +48,33 @@ class BlogController extends Controller
     {
         try {
             $validate = $request->validate([
-                'judul' => 'required',
+                'judul' => 'required|unique:blogs',
                 'content' => 'required',
                 'tags' => 'required',
             ]);
 
-            Blog::create([
+            $data = [
                 'judul' => $validate['judul'],
                 'content' => $validate['content'],
                 'tags' => $validate['tags'],
                 'views' => 0,
-                'likes' => 0
-            ]);
+                'likes' => 0,
+                'slug' => Str::slug($validate['judul'])
+            ];
 
-            ActivityHelpers::LogActivityHelpers('Membuat Blog', [
-                'judul' => $validate['judul'],
-                'content' => $validate['content'],
-                'tags' => $validate['tags'],
-                'views' => 0,
-                'likes' => 0
-            ], '1');
+            Blog::create($data);
 
-            return APIHelpers::responseAPI([
-                'judul' => $validate['judul'],
-                'content' => $validate['content'],
-                'tags' => $validate['tags'],
-                'views' => 0,
-                'likes' => 0
-            ], 200);
+            ActivityHelpers::LogActivityHelpers('Membuat Blog', $data, '1');
+
+            return APIHelpers::responseAPI(['message' => 'Berhasil membuat Blog!', 'data' => $data], 200);
         } catch (Exception $error) {
-            ActivityHelpers::LogActivityHelpers('Membuat Blog', [
+            ActivityHelpers::LogActivityHelpers('Gagal Membuat Blog!', [
                 'error' => $error->getMessage()
             ], '0');
 
             return APIHelpers::responseAPI([
                 'error' => $error->getMessage()
-            ], $error->getCode());
+            ], 500);
         }
     }
 
@@ -109,33 +106,31 @@ class BlogController extends Controller
                 'tags' => 'required',
             ]);
 
-            Blog::findOrFail($id)->update([
+            $data = [
                 'judul' => $validate['judul'],
                 'content' => $validate['content'],
                 'tags' => $validate['tags'],
-            ]);
+                'slug' => Str::slug($validate['judul'])
+            ];
 
-            ActivityHelpers::LogActivityHelpers('Mengedit Blog', [
-                'id' => $id,
-                'judul' => $validate['judul'],
-                'content' => $validate['content'],
-                'tags' => $validate['tags'],
-            ], '1');
+            Blog::findOrFail($id)->update($data);
+
+            $data['id'] = $id;
+
+            ActivityHelpers::LogActivityHelpers('Mengedit Blog', $data, '1');
 
             return APIHelpers::responseAPI([
-                'id' => $id,
-                'judul' => $validate['judul'],
-                'content' => $validate['content'],
-                'tags' => $validate['tags'],
+                'message' => 'Berhasil merubah Blog!',
+                'data' => $data
             ], 200);
         } catch (Exception $error) {
-            ActivityHelpers::LogActivityHelpers('Mengedit Blog', [
+            ActivityHelpers::LogActivityHelpers('Gagal merubah Blog!', [
                 'error' => $error->getMessage()
             ], '0');
 
             return APIHelpers::responseAPI([
                 'error' => $error->getMessage()
-            ], $error->getCode());
+            ], 500);
         }
     }
 
@@ -160,7 +155,7 @@ class BlogController extends Controller
 
             return APIHelpers::responseAPI([
                 'error' => $error->getMessage()
-            ], $error->getCode());
+            ], 500);
         }
     }
 }
