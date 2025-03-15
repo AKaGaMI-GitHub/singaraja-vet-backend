@@ -43,7 +43,7 @@ class RegisterController extends Controller
             }
 
             User::create($data);
-            ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account!', $request->all(), '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account!', $data, '0');
             Log::info('Successfully Create Account');
             return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => $data], 200);
         } catch (Exception $error) {
@@ -75,7 +75,7 @@ class RegisterController extends Controller
                 'is_active' => '1'
             ]);
 
-            UserDetail::updateOrCreate(['user_id' => $userID], [
+            $data = [
                 'user_id' => $userID,
                 'alamat' => $validate['alamat'],
                 'tempat_lahir' => $validate['tempat_lahir'],
@@ -84,7 +84,14 @@ class RegisterController extends Controller
                 'phone' => $validate['phone'],
                 'mobile' => $validate['mobile'],
                 'social_media' => $validate['social_media'],
-            ]);
+            ];
+
+            UserDetail::updateOrCreate(['user_id' => $userID], $data);
+
+            Log::info('Successfully Create Detail Account!');
+            ActivityHelpers::LogActivityHelpers('Berhasil Melengkapi Biodata Account!', $data, '0');
+
+            return APIHelpers::responseAPI(['message' => 'Berhasil Melengkapi Biodata Account!', 'data' => $data], 200);
 
         } catch (Exception $error) {
             Log::error($error->getMessage());

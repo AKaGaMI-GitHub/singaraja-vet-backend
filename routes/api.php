@@ -14,3 +14,5 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/auth/registered', [RegisterController::class, 'registerAccount']);
 Route::post('/auth/registered/detail', [RegisterController::class, 'accountDetail']);
+
+// require __DIR__.'/auth.php';
