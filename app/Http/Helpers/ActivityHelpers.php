@@ -3,6 +3,7 @@
 
 namespace App\Http\Helpers;
 
+use App\Jobs\LogActivityJob;
 use App\Models\LogActivity;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -15,14 +16,7 @@ class ActivityHelpers
 {
     public static function LogActivityHelpers($activity, $data = [], $status) 
     {
-        LogActivity::create([
-            'user_id' => Auth::id() ?? null,
-            'ip_detail' => json_encode(Self::ipNonAPI(), true),
-            'device' => Req::header('User-Agent'),
-            'activity' => $activity,
-            'status' => $status,
-            'detail' => json_encode($data, true)
-        ]);
+        dispatch(new LogActivityJob($activity, $data, $status))->withoutDelay();
     }
 
     private static function getIP()
@@ -32,7 +26,7 @@ class ActivityHelpers
         return $dataIP;
     }
 
-    private static function ipNonAPI($ip = null)
+    public static function ipNonAPI($ip = null)
     {
         if ($ip === '127.0.0.1') {
             return Position::make([

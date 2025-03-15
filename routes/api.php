@@ -13,4 +13,4 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::post('/auth/registered', [RegisterController::class, 'registerAccount']);
-Route::post('/auth/registered/{username}', [RegisterController::class, 'accountDetail']);
+Route::post('/auth/registered/detail', [RegisterController::class, 'accountDetail']);

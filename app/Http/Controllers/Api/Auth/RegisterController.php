@@ -18,12 +18,13 @@ class RegisterController extends Controller
     {
         try {
             $validate = $request->validate([
-                'username' => 'unique|required|string|min:5|max:20',
+                'username' => 'unique:users|required|string|min:5|max:20',
                 'nama_depan' => 'required',
                 'nama_belakang' => 'required',
-                'email' => 'unique|email',
+                'email' => 'unique:users|email',
                 'password' => 'required|string',
-                'avatar' => 'nullable|image:jpeg,png,jpg|max:2048'
+                'avatar' => 'nullable|image:jpeg,png,jpg|max:2048',
+                'is_vet' => 'nullable|in:0,1'
             ]);
 
             $data = [
@@ -32,7 +33,8 @@ class RegisterController extends Controller
                 'nama_belakang' => $validate['nama_belakang'],
                 'email' => $validate['email'],
                 'password' => Hash::make($validate['password']),
-                'is_active' => '0'
+                'is_active' => '0',
+                'is_vet' => $validate['is_vet'] ?? '0'
             ];
 
             if ($request->hasFile('avatar')) {
@@ -46,16 +48,17 @@ class RegisterController extends Controller
             return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => $data], 200);
         } catch (Exception $error) {
             Log::error($error->getMessage());
-            ActivityHelpers::LogActivityHelpers('Gagal Membuat Account!', ['message' => $error->getMessage(), 'data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Gagal Membuat Account!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
 
     }
 
-    public function accountDetail($username, Request $request) 
+    public function accountDetail(Request $request) 
     {
         try {
             $validate = $request->validate([
+                'username' => 'required',
                 'alamat' => 'required|string',
                 'tempat_lahir' => 'required|string',
                 'tanggal_lahir' => 'required|date',
@@ -65,7 +68,7 @@ class RegisterController extends Controller
                 'social_media' => 'nullable|string',
             ]);
 
-            $user = User::where('username', $username)->first();
+            $user = User::where('username', $validate['username'])->first();
             $userID = $user->id;
 
             $user->update([
@@ -86,17 +89,7 @@ class RegisterController extends Controller
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Melengkapkan Biodata Account!', [
-                'message' => $error->getMessage(),
-                'data' => [
-                    'user_id' => $userID,
-                    'alamat' => $validate['alamat'],
-                    'tempat_lahir' => $validate['tempat_lahir'],
-                    'tanggal_lahir' => $validate['tanggal_lahir'],
-                    'jenis_kelamin' => (string) $validate['jenis_kelamin'],
-                    'phone' => $validate['phone'],
-                    'mobile' => $validate['mobile'],
-                    'social_media' => json_encode($validate['social_media']),
-                ]
+                'message' => $error->getMessage()
             ], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
