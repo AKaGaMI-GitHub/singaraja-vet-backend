@@ -5,4 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'user'], function () {
     Route::get('/blog/{type}', [BlogController::class, 'getBlog']);
+    Route::get('/blog/detail/{type}', [BlogController::class, 'getDetailBlog']);
 });

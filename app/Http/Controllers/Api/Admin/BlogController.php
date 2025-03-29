@@ -8,6 +8,7 @@ use App\Http\Helpers\APIHelpers;
 use App\Models\Blog;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -51,9 +52,11 @@ class BlogController extends Controller
                 'judul' => 'required|unique:blogs',
                 'content' => 'required',
                 'tags' => 'required',
+                'thumbnail' => 'required|mimes:jpeg,jpg,png|max:2048',
             ]);
 
             $data = [
+                'user_id' => Auth::guard('sanctum')->id(),
                 'judul' => $validate['judul'],
                 'content' => $validate['content'],
                 'tags' => $validate['tags'],
@@ -62,6 +65,11 @@ class BlogController extends Controller
                 'slug' => Str::slug($validate['judul'])
             ];
 
+            if ($request->file('thumbnail')) {
+                $fileThumbnail = $validate['thumbnail']->store('public/blog/thumbnail');
+                $data['thumbnail'] = $fileThumbnail;
+            }
+            
             Blog::create($data);
 
             ActivityHelpers::LogActivityHelpers('Membuat Blog', $data, '1');

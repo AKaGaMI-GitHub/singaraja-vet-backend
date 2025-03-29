@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->string('judul');
+            $table->text('thumbnail');
             $table->text('content');
             $table->text('tags');
             $table->integer('views');

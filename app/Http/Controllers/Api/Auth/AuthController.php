@@ -25,7 +25,7 @@ class AuthController extends Controller
                 'username' => $validate['username'],
                 'password' => $validate['password']
             ])) {
-                $user = User::where('username', $validate['username'])->first();
+                $user = $request->user();
                 if ($user->is_active) {
                     $token = $user->createToken('auth_token')->plainTextToken;
                     Log::info('Login Success');
