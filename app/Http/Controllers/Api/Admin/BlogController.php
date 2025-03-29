@@ -66,7 +66,7 @@ class BlogController extends Controller
             ];
 
             if ($request->file('thumbnail')) {
-                $fileThumbnail = $validate['thumbnail']->store('public/blog/thumbnail');
+                $fileThumbnail = $validate['thumbnail']->store('/blog/thumbnail', 'public');
                 $data['thumbnail'] = $fileThumbnail;
             }
             

@@ -18,7 +18,17 @@ class Blog extends Model
 
     public function getThumbnailUrlAttribute()
     {
-        return $this->thumbnail ? url(Storage::url($this->getRawOriginal('thumbnail'))) : null;
+        $thumbnail = $this->getRawOriginal('thumbnail');
+        
+        if (!$thumbnail) {
+            return null;
+        }
+
+        if (env('APP_ENV') === 'local') {
+            return env('APP_URL') . Storage::url($thumbnail);
+        } else {
+            return url(Storage::url($thumbnail));
+        }
     }
 
     public function getTagsParsedAttribute()
