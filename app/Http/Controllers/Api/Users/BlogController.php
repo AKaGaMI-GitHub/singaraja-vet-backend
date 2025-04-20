@@ -25,21 +25,25 @@ class BlogController extends Controller
                 if ($request->keyword) {
                     $data = $data->where('judul', 'like', '%' . $request->keyword . '%');
                 }
-                if ($request->date) {
-                    $data = $data->whereDate('created_at', $request->date);
-                }
 
+                if ($request->from && $request->to) {
+                    $data = $data->whereBetween('created_at', [$request->from, $request->to]);
+                } elseif ($request->from) {
+                    $data = $data->whereDate('created_at', '>=', $request->from);
+                } elseif ($request->to) {
+                    $data = $data->whereDate('created_at', '<=', $request->to);
+                }
+                
                 if ($request->tags) {
-                    $data = $data->where('tags', 'like', '%' . $request->tags . '%');
-                }
-
-                if ($request->author) {
-                    $data->whereHas('author', function ($query) use ($request) {
-                        $query->where('nama_depan', 'like', '%' . $request->author . '%')
-                            ->orWhere('nama_belakang', 'like', '%' . $request->author . '%');
+                    $tags = explode(',', $request->tags);
+                    $data = $data->where(function ($query) use ($tags) {
+                        foreach ($tags as $tag) {
+                            $query->orWhere('tags', 'like', '%' . $tag . '%');
+                        }
                     });
                 }
-                $data = $data->paginate(10);
+                
+                $data = $data->paginate(15);
             } else {
                 Log::error('Gagal mendapatkan data Blog!');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Blog!', ['message' => 'Tipe data tidak valid!'], '0');
