@@ -62,8 +62,9 @@ class BlogController extends Controller
     public function getDetailBlog ($slug) {
         try {
             $data = Blog::with('komentar', 'author.user_detail')->where('slug', $slug)->first();
+            $latestBlog = Blog::with('komentar', 'author.user_detail')->orderBy('id', 'DESC')->limit(4)->get();
             Log::info('Berhasil mendapatkan detail Blog!');
-            return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan detail Blog!', 'data' => $data], 200);
+            return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan detail Blog!', 'data' => $data, 'latestBlog' => $latestBlog], 200);
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan detail Blog!');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan detail Blog!', ['message' => $error->getMessage()], '0');
