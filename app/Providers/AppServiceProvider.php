@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         if (env('APP_ENV') === "local") {
             if (App::runningInConsole() && php_sapi_name() === 'cli-server') {
                 Artisan::call('queue:work');
@@ -31,6 +32,5 @@ class AppServiceProvider extends ServiceProvider
         if (env('APP_ENV') !== "local") {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
-
     }
 }

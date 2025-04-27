@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +9,6 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -46,15 +44,18 @@ class User extends Authenticatable
         ];
     }
 
-    public function user_detail() {
+    public function user_detail()
+    {
         return $this->belongsTo(UserDetail::class, 'id', 'user_id');
     }
 
-    public function pets() {
+    public function pets()
+    {
         return $this->hasMany(Pets::class, 'id', 'user_id');
     }
 
-    public function rekam_medis() {
+    public function rekam_medis()
+    {
         return $this->hasMany(RekamMedis::class, 'id', 'user_id');
     }
 }

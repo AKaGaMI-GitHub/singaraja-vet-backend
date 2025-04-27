@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
-    public function registerAccount(Request $request) 
+    public function registerAccount(Request $request)
     {
         try {
             $validate = $request->validate([
@@ -42,8 +42,8 @@ class RegisterController extends Controller
                 $data['avatar'] = $img;
             }
 
-            User::create($data);
-            ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account!', $data, '0');
+            User::updateOrCreate(['email' => $validate['email']], $data);
+            ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account!', $data, '1');
             Log::info('Successfully Create Account');
             return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => $data], 200);
         } catch (Exception $error) {
@@ -51,10 +51,9 @@ class RegisterController extends Controller
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Account!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
-
     }
 
-    public function accountDetail(Request $request) 
+    public function accountDetail(Request $request)
     {
         try {
             $validate = $request->validate([
@@ -92,7 +91,6 @@ class RegisterController extends Controller
             ActivityHelpers::LogActivityHelpers('Berhasil Melengkapi Biodata Account!', $data, '0');
 
             return APIHelpers::responseAPI(['message' => 'Berhasil Melengkapi Biodata Account!', 'data' => $data], 200);
-
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Melengkapkan Biodata Account!', [
