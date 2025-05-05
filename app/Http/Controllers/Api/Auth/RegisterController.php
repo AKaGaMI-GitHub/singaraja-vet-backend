@@ -20,10 +20,10 @@ class RegisterController extends Controller
             $validate = $request->validate([
                 'username' => 'unique:users|required|string|min:5|max:20',
                 'nama_depan' => 'required',
-                'nama_belakang' => 'required',
+                'nama_belakang' => 'nullable',
                 'email' => 'unique:users|email',
                 'password' => 'required|string',
-                'avatar' => 'nullable|image:jpeg,png,jpg|max:2048',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'is_vet' => 'nullable|in:0,1'
             ]);
 
@@ -38,7 +38,7 @@ class RegisterController extends Controller
             ];
 
             if ($request->hasFile('avatar')) {
-                $img = $request->file('img')->store('public/user/avatar/');
+                $img = $request->file('avatar')->store('public/user/avatar/');
                 $data['avatar'] = $img;
             }
 
@@ -62,9 +62,8 @@ class RegisterController extends Controller
                 'tempat_lahir' => 'required|string',
                 'tanggal_lahir' => 'required|date',
                 'jenis_kelamin' => 'required|in:male,female',
-                'phone' => 'nullable',
-                'mobile' => 'nullable',
-                'social_media' => 'nullable|string',
+                'mobile_code' => 'required|max:5',
+                'mobile' => 'required',
             ]);
 
             $user = User::where('username', $validate['username'])->first();
@@ -80,9 +79,7 @@ class RegisterController extends Controller
                 'tempat_lahir' => $validate['tempat_lahir'],
                 'tanggal_lahir' => $validate['tanggal_lahir'],
                 'jenis_kelamin' => (string) $validate['jenis_kelamin'],
-                'phone' => $validate['phone'],
-                'mobile' => $validate['mobile'],
-                'social_media' => $validate['social_media'],
+                'mobile' => $validate['mobile_code'] . $validate['mobile'],
             ];
 
             UserDetail::updateOrCreate(['user_id' => $userID], $data);

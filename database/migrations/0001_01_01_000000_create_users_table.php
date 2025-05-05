@@ -31,9 +31,7 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->enum('jenis_kelamin', ['male', 'female'])->nullable();
-            $table->string('phone')->nullable();
-            $table->string('mobile')->nullable();
-            $table->text('social_media')->nullable();
+            $table->string('mobile');
             $table->timestamps();
         });
 
