@@ -38,8 +38,8 @@ class RegisterController extends Controller
             ];
 
             if ($request->hasFile('avatar')) {
-                $img = $request->file('avatar')->store('public/user/avatar/');
-                $data['avatar'] = $img;
+                $img = $validate['avatar']->store('user/avatar', 'public');
+                $data['avatar'] = 'storage' . $img;
             }
 
             User::updateOrCreate(['email' => $validate['email']], $data);
