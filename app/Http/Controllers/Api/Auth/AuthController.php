@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -39,7 +40,6 @@ class AuthController extends Controller
                         'avatar' => $user->avatar,
                         'token' => $token,
                     ], '1');
-
                     return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
                         'username' => $user->username,
                         'nama_depan' => $user->nama_depan,
@@ -66,7 +66,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $user = Auth::user();
+            $user = Auth::guard('sanctum')->user();
             $user->tokens->each(function ($token, $key) {
                 $token->delete();
             });
