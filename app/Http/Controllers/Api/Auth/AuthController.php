@@ -38,6 +38,7 @@ class AuthController extends Controller
                         'nama_belakang' => $user->nama_belakang,
                         'email' => $user->email,
                         'avatar' => $user->avatar,
+                        'is_vet' => (string) $user->is_vet,
                         'token' => $token,
                     ], '1');
                     return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
@@ -46,6 +47,7 @@ class AuthController extends Controller
                         'nama_belakang' => $user->nama_belakang,
                         'email' => $user->email,
                         'avatar' => $user->avatar,
+                        'is_vet' => (string) $user->is_vet,
                         'token' => $token,
                     ]], 200);
                 } else {
