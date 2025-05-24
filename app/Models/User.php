@@ -27,7 +27,7 @@ class User extends Authenticatable
         'id',
         'password',
         'remember_token',
-        'is_vet',
+        // 'is_vet',
         'updated_at',
     ];
 
