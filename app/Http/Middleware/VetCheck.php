@@ -23,7 +23,7 @@ class VetCheck
             if ($user->is_vet == 1) {
                 return $next($request);
             } else {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return response()->json(['message' => 'Unauthroized'], 401);
             }
         } catch (Exception $error) {
             return APIHelpers::responseAPI(['message' => 'Unauthroized', 'error' => $error->getMessage()], 401);

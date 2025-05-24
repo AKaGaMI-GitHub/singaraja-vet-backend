@@ -21,24 +21,25 @@ class UserSettingsController extends Controller
     {
         try {
             $data = User::with('user_detail', 'pets');
-            if ($request->keyword) {
-                $data = $data->where(function($query) use ($request) {
-                    $query->where('nama_depan', $request->keyword)
-                    ->orWhere('nama_belakang', $request->keyword)
-                    ->orWhere('email', $request->keyword)
-                    ->orWhere('username', $request->keyword);
+            if ($request->has('keyword')) {
+                $keyword = '%' . $request->keyword . '%';
+                $data = $data->where(function($query) use ($keyword) {
+                     $query->where('nama_depan', 'like', $keyword)
+                        ->orWhere('nama_belakang', 'like', $keyword)
+                        ->orWhere('email', 'like', $keyword)
+                        ->orWhere('username', 'like', $keyword);
                 });
             }
 
-            if ($request->status) {
+            if ($request->has('status')) {
                 $data = $data->where('is_active', (string) $request->status);
             }
 
-            if ($request->vet_status) {
+            if ($request->has('vet_status')) {
                 $data = $data->where('is_vet', (string) $request->vet_status);
             }
 
-            $data = $data->paginate(10);
+            $data = $data->paginate(8);
 
             Log::info('Berhasil mendapatkan data user');
             return APIHelpers::responseAPI($data, 200);
