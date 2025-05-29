@@ -94,50 +94,50 @@ class AuthController extends Controller
         }
     }
 
-    public function redirectToProvider($provider)
-    {
-        return Socialite::driver($provider)->redirect();
-    }
+    // public function redirectToProvider($provider)
+    // {
+    //     return Socialite::driver($provider)->redirect();
+    // }
 
-    public function handleGoogleCallback()
-    {
-        try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-            $user = User::where('email', $googleUser->email)->first();
-            if (!$user) {
-                $user = User::create(['nama_depan' => $googleUser->name, 'email' => $googleUser->email, 'password' => Hash::make(rand(100000, 999999))]);
-                ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account (SSO Google)!', ['nama_depan' => $googleUser->name, 'email' => $googleUser->email, 'password' => Hash::make(rand(100000, 999999))], '1');
-                Log::info('Successfully Create Account');
-                return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => ['nama_depan' => $googleUser->name, 'email' => $googleUser->email], 'redirect' => '/register?nama_depan=' . $googleUser->name . '&email=' . $googleUser->email], 200);
-            }
+    // public function handleGoogleCallback()
+    // {
+    //     try {
+    //         $googleUser = Socialite::driver('google')->stateless()->user();
+    //         $user = User::where('email', $googleUser->email)->first();
+    //         if (!$user) {
+    //             $user = User::create(['nama_depan' => $googleUser->name, 'email' => $googleUser->email, 'password' => Hash::make(rand(100000, 999999))]);
+    //             ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account (SSO Google)!', ['nama_depan' => $googleUser->name, 'email' => $googleUser->email, 'password' => Hash::make(rand(100000, 999999))], '1');
+    //             Log::info('Successfully Create Account');
+    //             return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => ['nama_depan' => $googleUser->name, 'email' => $googleUser->email], 'redirect' => '/register?nama_depan=' . $googleUser->name . '&email=' . $googleUser->email], 200);
+    //         }
 
-            $token = $user->createToken('auth_token')->plainTextToken;
-            Log::info('Login Success');
-            ActivityHelpers::LogActivityHelpers('Login Berhasil (SSO Google) !', [
-                'username' => $user->username,
-                'nama_depan' => $user->nama_depan,
-                'nama_belakang' => $user->nama_belakang,
-                'email' => $user->email,
-                'avatar' => $user->avatar,
-                'token' => $token,
-            ], '1');
+    //         $token = $user->createToken('auth_token')->plainTextToken;
+    //         Log::info('Login Success');
+    //         ActivityHelpers::LogActivityHelpers('Login Berhasil (SSO Google) !', [
+    //             'username' => $user->username,
+    //             'nama_depan' => $user->nama_depan,
+    //             'nama_belakang' => $user->nama_belakang,
+    //             'email' => $user->email,
+    //             'avatar' => $user->avatar,
+    //             'token' => $token,
+    //         ], '1');
 
-            return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
-                'username' => $user->username,
-                'nama_depan' => $user->nama_depan,
-                'nama_belakang' => $user->nama_belakang,
-                'email' => $user->email,
-                'avatar' => $user->avatar,
-                'token' => $token,
-            ]], 200);
-        } catch (Exception $error) {
+    //         return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
+    //             'username' => $user->username,
+    //             'nama_depan' => $user->nama_depan,
+    //             'nama_belakang' => $user->nama_belakang,
+    //             'email' => $user->email,
+    //             'avatar' => $user->avatar,
+    //             'token' => $token,
+    //         ]], 200);
+    //     } catch (Exception $error) {
 
-            Log::info('Logout Google Gagal!');
-            ActivityHelpers::LogActivityHelpers('Logout Google Gagal!', [
-                'message' => $error->getMessage(),
-            ], '0');
+    //         Log::info('Logout Google Gagal!');
+    //         ActivityHelpers::LogActivityHelpers('Logout Google Gagal!', [
+    //             'message' => $error->getMessage(),
+    //         ], '0');
 
-            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
-        }
-    }
+    //         return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+    //     }
+    // }
 }

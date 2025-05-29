@@ -30,7 +30,7 @@ class LogActivityJob implements ShouldQueue
     public function handle()
     {
         LogActivity::create([
-            'user_id' => Auth::id() ?? null,
+            'user_id' => Auth::guard('sanctum')->user()->id ?? null,
             'ip_detail' => json_encode(ActivityHelpers::ipNonAPI(), true),
             'device' => Req::header('User-Agent'),
             'activity' => $this->activity,

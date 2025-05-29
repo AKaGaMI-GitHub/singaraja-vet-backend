@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\BlogController;
+use App\Http\Controllers\Api\Admin\LogActivityController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,4 +14,6 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::patch('/user-settings/status/{username}', [UserSettingsController::class, 'status']);
     Route::patch('/user-settings/vet-status/{username}', [UserSettingsController::class, 'vetStatus']);
     Route::delete('/user-settings/delete/{username}', [UserSettingsController::class, 'destroy']);
+
+    Route::get('/log-activity', [LogActivityController::class, 'index']);
 });

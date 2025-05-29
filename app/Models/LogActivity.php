@@ -11,6 +11,11 @@ class LogActivity extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'ip_detail' => 'json',
+        'detail' => 'json'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }

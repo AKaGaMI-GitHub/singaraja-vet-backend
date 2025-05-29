@@ -40,7 +40,7 @@ class UserSettingsController extends Controller
                 $data = $data->where('is_vet', (string) $request->vet_status);
             }
 
-            $data = $data->paginate(8);
+            $data = $data->orderBy('id', 'DESC')->paginate(8);
 
             Log::info('Berhasil mendapatkan data user');
             return APIHelpers::responseAPI($data, 200);
