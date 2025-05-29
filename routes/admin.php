@@ -9,6 +9,8 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
 
     Route::get('/user-settings', [UserSettingsController::class, 'index']);
     Route::post('/user-settings/storeOrUpdate', [UserSettingsController::class, 'storeOrUpdate']);
-    Route::patch('/user-settings/status/{id}', [UserSettingsController::class, 'status']);
-    Route::delete('/user-settings/delete/{id}', [UserSettingsController::class, 'destroy']);
+    Route::get('/user-settings/{username}', [UserSettingsController::class, 'edit']);
+    Route::patch('/user-settings/status/{username}', [UserSettingsController::class, 'status']);
+    Route::patch('/user-settings/vet-status/{username}', [UserSettingsController::class, 'vetStatus']);
+    Route::delete('/user-settings/delete/{username}', [UserSettingsController::class, 'destroy']);
 });
