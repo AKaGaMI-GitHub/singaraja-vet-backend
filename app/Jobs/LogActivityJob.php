@@ -18,10 +18,12 @@ class LogActivityJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $activity, $data, $status;
+    protected $activity, $data, $status, $device, $user_id;
 
-    public function __construct($activity, $data, $status)
+    public function __construct($activity, $data, $status, $device, $user_id)
     {
+        $this->device = $device;
+        $this->user_id = $user_id;
         $this->activity = $activity;
         $this->data = $data;
         $this->status = $status;
@@ -30,9 +32,9 @@ class LogActivityJob implements ShouldQueue
     public function handle()
     {
         LogActivity::create([
-            'user_id' => Auth::guard('sanctum')->user()->id ?? null,
+            'user_id' => $this->user_id,
             'ip_detail' => json_encode(ActivityHelpers::ipNonAPI(), true),
-            'device' => Req::header('User-Agent'),
+            'device' => $this->device,
             'activity' => $this->activity,
             'status' => $this->status,
             'detail' => json_encode($this->data, true),

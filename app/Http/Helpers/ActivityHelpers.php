@@ -16,7 +16,9 @@ class ActivityHelpers
 {
     public static function LogActivityHelpers($activity, $data = [], $status) 
     {
-        dispatch(new LogActivityJob($activity, $data, $status))->withoutDelay();
+        $user_id = Auth::guard('sanctum')->id();
+        $device = request()->header('User-Agent');
+        dispatch(new LogActivityJob($activity, $data, $status, $device, $user_id))->withoutDelay();
     }
 
     private static function getIP()
