@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as Req;
 
 class LogActivityJob implements ShouldQueue
@@ -31,13 +32,22 @@ class LogActivityJob implements ShouldQueue
 
     public function handle()
     {
-        LogActivity::create([
+        Log::info('Job executed with data:', [
             'user_id' => $this->user_id,
+            'device' => $this->device,
+            'activity' => $this->activity,
+            'status' => $this->status
+        ]);
+
+        LogActivity::create([
+            'user_id' => 1,
             'ip_detail' => json_encode(ActivityHelpers::ipNonAPI(), true),
             'device' => $this->device,
             'activity' => $this->activity,
             'status' => $this->status,
             'detail' => json_encode($this->data, true),
         ]);
+        
+        Log::info('LogActivity created successfully');
     }
 }

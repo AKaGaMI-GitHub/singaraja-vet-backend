@@ -7,6 +7,7 @@ use App\Jobs\LogActivityJob;
 use App\Models\LogActivity;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Stevebauman\Location\Facades\Location;
 use Stevebauman\Location\Position;
 use Illuminate\Support\Facades\Request as Req;
@@ -18,6 +19,10 @@ class ActivityHelpers
     {
         $user_id = Auth::guard('sanctum')->id();
         $device = request()->header('User-Agent');
+        Log::info('User data:', [
+            'user' => Auth::guard('sanctum')->user(),
+            'user_id' => $user_id
+        ]);
         dispatch(new LogActivityJob($activity, $data, $status, $device, $user_id))->withoutDelay();
     }
 

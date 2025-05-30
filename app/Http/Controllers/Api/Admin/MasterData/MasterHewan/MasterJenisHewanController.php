@@ -61,7 +61,7 @@ class MasterJenisHewanController extends Controller
             MasterJenisHewan::create($data);
 
             Log::error('Berhasil store data Jenis Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
@@ -120,7 +120,7 @@ class MasterJenisHewanController extends Controller
             MasterJenisHewan::findOrFail($id)->update($data);
 
             Log::error('Berhasil update data Jenis Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
@@ -143,7 +143,7 @@ class MasterJenisHewanController extends Controller
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
             Log::error('Berhasil merubah status data Jenis Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);

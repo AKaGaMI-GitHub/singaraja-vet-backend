@@ -67,7 +67,7 @@ class MasterRasHewanController extends Controller
             MasterRasHewan::create($data);
 
             Log::error('Berhasil store data Ras Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil store data Ras Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil store data Ras Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
@@ -128,7 +128,7 @@ class MasterRasHewanController extends Controller
             MasterRasHewan::findOrFail($id)->update($data);
 
             Log::error('Berhasil store data Ras Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil store data Ras Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil store data Ras Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
@@ -151,7 +151,7 @@ class MasterRasHewanController extends Controller
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
             Log::error('Berhasil merubah status data Jenis Ras Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Ras Hewan (Admin)', ['data' => $data], '0');
+            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Ras Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
