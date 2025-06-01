@@ -18,7 +18,7 @@ class MasterRasHewanController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = MasterRasHewan::query();
+            $data = MasterRasHewan::with('jenis_hewan');
 
             if ($request->has('keyword')) {
                 $data = $data->where('nama_ras_hewan', 'like', '%' . $request->keyword . '%');
@@ -53,13 +53,13 @@ class MasterRasHewanController extends Controller
     {
         try {
             $validate = $request->validate([
-                'id_jenis_hewan' => 'required|numeric',
+                'jenis_hewan_id' => 'required|numeric',
                 'nama_ras_hewan' => 'required',
                 'is_active' => 'required|in:0,1'
             ]);
 
             $data = [
-                'id_jenis_hewan' => $validate['id_jenis_hewan'],
+                'jenis_hewan_id' => $validate['jenis_hewan_id'],
                 'nama_ras_hewan' => $validate['nama_ras_hewan'],
                 'is_active' => (string) $validate['is_active']
             ];
@@ -114,13 +114,13 @@ class MasterRasHewanController extends Controller
     {
         try {
             $validate = $request->validate([
-                'id_jenis_hewan' => 'required|numeric',
+                'jenis_hewan_id' => 'required|numeric',
                 'nama_ras_hewan' => 'required',
                 'is_active' => 'required|in:0,1'
             ]);
 
              $data = [
-                'id_jenis_hewan' => $validate['id_jenis_hewan'],
+                'jenis_hewan_id' => $validate['jenis_hewan_id'],
                 'nama_ras_hewan' => $validate['nama_ras_hewan'],
                 'is_active' => (string) $validate['is_active']
             ];
