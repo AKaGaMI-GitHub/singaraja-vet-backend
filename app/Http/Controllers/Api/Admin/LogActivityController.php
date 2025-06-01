@@ -38,7 +38,7 @@ class LogActivityController extends Controller
             Log::error('Gagal Mendapatkan data Log Activity! (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal Mendapatkan data Log Activity! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }

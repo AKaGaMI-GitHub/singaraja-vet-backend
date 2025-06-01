@@ -29,7 +29,7 @@ class BlogController extends Controller
             Log::error('Gagal mendapatkan data Blog!');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Blog! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -77,11 +77,11 @@ class BlogController extends Controller
             return APIHelpers::responseAPI(['message' => 'Berhasil membuat Blog!', 'data' => $data], 200);
         } catch (Exception $error) {
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Blog!', [
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], '0');
 
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -133,11 +133,11 @@ class BlogController extends Controller
             ], 200);
         } catch (Exception $error) {
             ActivityHelpers::LogActivityHelpers('Gagal merubah Blog!', [
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], '0');
 
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -158,11 +158,11 @@ class BlogController extends Controller
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             ActivityHelpers::LogActivityHelpers('Menghapus Blog', [
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], '0');
 
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }

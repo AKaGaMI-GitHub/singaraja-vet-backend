@@ -24,8 +24,8 @@ class MasterRasHewanController extends Controller
                 $data = $data->where('nama_ras_hewan', 'like', '%' . $request->keyword . '%');
             }
 
-            if ($request->has('jenis')) {
-                $data = $data->where('jenis_hewan_id', $request->jenis);
+            if ($request->has('jenis_hewan')) {
+                $data = $data->where('jenis_hewan_id', $request->jenis_hewan);
             }
 
             if ($request->has('status')) {
@@ -41,7 +41,7 @@ class MasterRasHewanController extends Controller
             Log::error('Gagal mendapatkan data Ras Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Ras Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -75,7 +75,7 @@ class MasterRasHewanController extends Controller
             Log::error('Gagal store data Ras Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal store data Ras Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -102,7 +102,7 @@ class MasterRasHewanController extends Controller
             Log::error('Gagal get data Jenis Ras Hewan');
             ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Ras Hewan', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -136,7 +136,7 @@ class MasterRasHewanController extends Controller
             Log::error('Gagal store data Ras Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal store data Ras Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -160,7 +160,7 @@ class MasterRasHewanController extends Controller
             Log::error('Gagal merubah status data Jenis Ras Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Ras Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }

@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api\Admin\MasterData\MasterHewan;
+namespace App\Http\Controllers\Api\Admin\MasterData\MasterObat;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
-use App\Models\Master\MasterJenisKelaminHewan;
+use App\Models\Master\MasterJenisObat;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class MasterJenisKelaminController extends Controller
+class MasterJenisObatController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,10 +18,10 @@ class MasterJenisKelaminController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = MasterJenisKelaminHewan::query();
+            $data = MasterJenisObat::query();
 
             if ($request->has('keyword')) {
-                $data = $data->where('jenis_kelamin', 'like', '%' . $request->keyword . '%');
+                $data = $data->where('nama_jenis_obat', 'like', '%' . $request->keyword . '%');
             }
 
             if ($request->has('status')) {
@@ -30,13 +29,13 @@ class MasterJenisKelaminController extends Controller
             }
 
             $data = $data->paginate(8);
-            Log::info('Berhasil mendapatkan data Jenis Kelamin Hewan (Admin)');
+            Log::info('Berhasil mendapatkan data Jenis Obat (Admin)');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
-            Log::error('Gagal mendapatkan data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
+            Log::error('Gagal mendapatkan data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Jenis Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
             ], 500);
@@ -50,26 +49,27 @@ class MasterJenisKelaminController extends Controller
     {
         try {
             $validate = $request->validate([
-                'jenis_kelamin' => 'required',
+                'nama_jenis_obat' => 'required',
+                'deskripsi_jenis_obat' => 'required|max:300',
                 'is_active' => 'required|in:0,1'
             ]);
 
             $data = [
-                'jenis_kelamin' => $validate['jenis_kelamin'],
+                'nama_jenis_obat' => $validate['nama_jenis_obat'],
+                'deskripsi_jenis_obat' => $validate['deskripsi_jenis_obat'],
                 'is_active' => (string) $validate['is_active']
             ];
 
-            MasterJenisKelaminHewan::create($data);
+            MasterJenisObat::create($data);
 
-            Log::error('Berhasil store data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            Log::error('Berhasil store data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Obat (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
-            Log::error('Gagal store data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Gagal store data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
+            Log::error('Gagal store data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Gagal store data Jenis Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
             ], 500);
@@ -82,21 +82,21 @@ class MasterJenisKelaminController extends Controller
     public function showList()
     {
         try {
-            $data = MasterJenisKelaminHewan::where('is_active', '1')->get()->map(function ($item) {
+            $data = MasterJenisObat::where('is_active', '1')->get()->map(function ($item) {
                 return [
-                    'label' => $item->jenis_kelamin,
+                    'label' => $item->nama_jenis_obat,
                     'value' => $item->id,
                 ];
             });
 
-            Log::error('Berhasil get data Jenis Kelamin Hewan');
+            Log::error('Berhasil get data Jenis Obat');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
 
         } catch (Exception $error) {
-            Log::error('Gagal get data Jenis Kelamin Hewan');
-            ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Kelamin Hewan', ['message' => $error->getMessage()], '0');
+            Log::error('Gagal get data Jenis Obat');
+            ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Obat', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
             ], 500);
@@ -106,30 +106,31 @@ class MasterJenisKelaminController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $id, Request $request)
+    public function update(string $id,Request $request)
     {
         try {
             $validate = $request->validate([
-                'jenis_kelamin' => 'required',
+                'nama_jenis_obat' => 'required',
+                'deskripsi_jenis_obat' => 'required|max:300',
                 'is_active' => 'required|in:0,1'
             ]);
 
             $data = [
-                'jenis_kelamin' => $validate['jenis_kelamin'],
+                'nama_jenis_obat' => $validate['nama_jenis_obat'],
+                'deskripsi_jenis_obat' => $validate['deskripsi_jenis_obat'],
                 'is_active' => (string) $validate['is_active']
             ];
 
-            MasterJenisKelaminHewan::findOrFail($id)->update($data);
+            MasterJenisObat::findOrFail($id)->update($data);
 
-            Log::error('Berhasil update data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            Log::error('Berhasil update data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Obat (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
-            Log::error('Gagal update data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
+            Log::error('Gagal update data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
             ], 500);
@@ -142,18 +143,18 @@ class MasterJenisKelaminController extends Controller
     public function status(string $id)
     {
         try {
-            $data = MasterJenisKelaminHewan::findOrFail($id);
+            $data = MasterJenisObat::findOrFail($id);
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
-            Log::error('Berhasil merubah status data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            Log::error('Berhasil merubah status data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Obat (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
 
         } catch (Exception $error) {
-            Log::error('Gagal merubah status data Jenis Kelamin Hewan (Admin)');
-            ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
+            Log::error('Gagal merubah status data Jenis Obat (Admin)');
+            ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
             ], 500);

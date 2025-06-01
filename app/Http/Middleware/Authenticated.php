@@ -30,7 +30,7 @@ class Authenticated
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
         } catch (Exception $error) {
-            return APIHelpers::responseAPI(['message' => 'Unauthroized', 'error' => $error->getMessage()], 401);
+            return APIHelpers::responseAPI(['message' => 'Unauthroized', 'message' => $error->getMessage()], 401);
         }
     }
 }

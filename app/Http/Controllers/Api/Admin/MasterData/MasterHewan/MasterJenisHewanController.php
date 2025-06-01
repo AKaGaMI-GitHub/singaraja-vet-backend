@@ -37,7 +37,7 @@ class MasterJenisHewanController extends Controller
             Log::error('Gagal mendapatkan data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -69,7 +69,7 @@ class MasterJenisHewanController extends Controller
             Log::error('Gagal store data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal store data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -96,7 +96,7 @@ class MasterJenisHewanController extends Controller
             Log::error('Gagal get data Jenis Hewan');
             ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Hewan', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -128,7 +128,7 @@ class MasterJenisHewanController extends Controller
             Log::error('Gagal update data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -152,7 +152,7 @@ class MasterJenisHewanController extends Controller
             Log::error('Gagal merubah status data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
-                'error' => $error->getMessage()
+                'message' => $error->getMessage()
             ], 500);
         }
     }
