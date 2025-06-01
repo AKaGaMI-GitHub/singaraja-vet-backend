@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisHewanContro
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisKelaminController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterJenisObatController;
+use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterObatController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,12 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::patch('/master/master-obat/jenis-obat/update/{id}', [MasterJenisObatController::class, 'update']);
     Route::patch('/master/master-obat/jenis-obat/status/{id}', [MasterJenisObatController::class, 'status']);
     Route::get('/master/master-obat/jenis-obat/show-list', [MasterJenisObatController::class, 'showList']);
+
+    Route::get('/master/master-obat/obat', [MasterObatController::class, 'index']);
+    Route::post('/master/master-obat/obat/create', [MasterObatController::class, 'store']);
+    Route::patch('/master/master-obat/obat/update/{id}', [MasterObatController::class, 'update']);
+    Route::patch('/master/master-obat/obat/status/{id}', [MasterObatController::class, 'status']);
+    Route::get('/master/master-obat/obat/show-list', [MasterObatController::class, 'showList']);
 
     Route::get('/user-settings', [UserSettingsController::class, 'index']);
     Route::post('/user-settings/storeOrUpdate', [UserSettingsController::class, 'storeOrUpdate']);
