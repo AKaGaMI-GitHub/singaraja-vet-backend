@@ -22,8 +22,26 @@ class BlogController extends Controller
     {
         try {
 
-            Blog::query();
+            $data = Blog::with('author');
+
+            if ($request->has('keyword')) {
+                $data = $data->where('nama_jenis_hewan', 'like', '%' . $request->keyword . '%');
+            }
+
+            if ($request->has('tahun')) {
+                $data = $data->where('created_at', $request->tahun);
+            }
+
+            if ($request->has('author')) {
+                $data = $data->where('author_id', $request->author);
+            }
+
             Log::info('Berhasil Mendapatkan data Blog! (Admin)');
+
+            $data = $data->paginate(8);
+            return APIHelpers::responseAPI([
+                'data' => $data
+            ], 200);
 
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan data Blog!');
@@ -148,13 +166,9 @@ class BlogController extends Controller
     public function destroy(string $id)
     {
         try {
-            
             $data = Blog::findOrFail($id);
-            
-            $action = $data->delete();
-
+            $data->delete();
             ActivityHelpers::LogActivityHelpers('Menghapus Blog', $data, '1');
-
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             ActivityHelpers::LogActivityHelpers('Menghapus Blog', [

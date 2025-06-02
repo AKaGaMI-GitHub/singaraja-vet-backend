@@ -11,7 +11,10 @@ use App\Http\Controllers\Api\Admin\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
+    Route::get('/blog', [BlogController::class, 'index']);
     Route::post('/blog/store', [BlogController::class, 'store']);
+    Route::patch('/blog/update/{id}', [BlogController::class, 'update']);
+    Route::delete('/blog/store', [BlogController::class, 'destroy']);
 
     Route::get('/master/master-hewan/jenis-kelamin', [MasterJenisKelaminController::class, 'index']);
     Route::post('/master/master-hewan/jenis-kelamin/create', [MasterJenisKelaminController::class, 'store']);
