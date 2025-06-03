@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisHewanController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisKelaminController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanController;
+use App\Http\Controllers\Api\Admin\UserSettingsController;
 use App\Http\Controllers\API\Users\BlogController;
 use Illuminate\Support\Facades\Route;
 

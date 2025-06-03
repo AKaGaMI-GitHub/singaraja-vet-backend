@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserDetail;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -24,8 +25,8 @@ class UserSettingsController extends Controller
             $data = User::with('user_detail', 'pets');
             if ($request->has('keyword')) {
                 $keyword = '%' . $request->keyword . '%';
-                $data = $data->where(function($query) use ($keyword) {
-                     $query->where('nama_depan', 'like', $keyword)
+                $data = $data->where(function ($query) use ($keyword) {
+                    $query->where('nama_depan', 'like', $keyword)
                         ->orWhere('nama_belakang', 'like', $keyword)
                         ->orWhere('email', 'like', $keyword)
                         ->orWhere('username', 'like', $keyword);
@@ -53,17 +54,28 @@ class UserSettingsController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function showList()
     {
-        //
+        try {
+            $data = User::where('is_vet', '1')->get([
+                'id as value',
+                DB::raw("CONCAT(nama_depan, ' ', nama_belakang) as label")
+            ]);
+            Log::info('Berhasil mendapatkan data list user hhh');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal mendapatkan data list user');
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data list User! (Admin)', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI([
+                'message' => $error->getMessage()
+            ], 500);
+        }
     }
 
-    public function edit($username) {
+    public function edit($username)
+    {
         try {
-           $data = User::with('user_detail')->where('username', $username)->first();
+            $data = User::with('user_detail')->where('username', $username)->first();
 
             Log::info('Berhasil mendapatkan data user');
             return APIHelpers::responseAPI($data, 200);
@@ -99,7 +111,7 @@ class UserSettingsController extends Controller
                 'mobile_code' => 'required|max:5',
                 'mobile' => 'required',
             ]);
-    
+
             $data = [
                 'nama_depan' => $validate['nama_depan'],
                 'nama_belakang' => $validate['nama_belakang'],
@@ -115,17 +127,17 @@ class UserSettingsController extends Controller
             if ($request->password != '') {
                 $data['password'] = Hash::make($validate['password']);
             }
-    
+
             if ($request->hasFile('avatar')) {
                 $img = $validate['avatar']->store('user/avatar', 'public');
                 $data['avatar'] = 'storage' . $img;
             }
-    
+
             User::updateOrCreate(['email' => $validate['email']], $data);
-    
+
             $user = User::where('email', $validate['email'])->first();
-                $userID = $user->id;
-    
+            $userID = $user->id;
+
             $dataDetail = [
                 'user_id' => $userID,
                 'alamat' => $validate['alamat'],
@@ -134,7 +146,7 @@ class UserSettingsController extends Controller
                 'jenis_kelamin' => (string) $validate['jenis_kelamin'],
                 'mobile' => $validate['mobile_code'] . $validate['mobile'],
             ];
-    
+
             UserDetail::updateOrCreate(['user_id' => $userID], $dataDetail);
 
             Log::info('Berhasil Membuat Account! (Admin)');
@@ -145,10 +157,10 @@ class UserSettingsController extends Controller
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Account! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
-
     }
 
-    public function status($username) {
+    public function status($username)
+    {
         try {
             $data = User::with('user_detail')->where('username', $username)->first();
             if (!$data) {
@@ -168,7 +180,8 @@ class UserSettingsController extends Controller
         }
     }
 
-    public function vetStatus($username) {
+    public function vetStatus($username)
+    {
         try {
             $data = User::with('user_detail')->where('username', $username)->first();
             if (!$data) {

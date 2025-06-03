@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::get('/blog', [BlogController::class, 'index']);
+    Route::get('/blog/detail/{slug}', [BlogController::class, 'show']);
     Route::post('/blog/store', [BlogController::class, 'store']);
     Route::patch('/blog/update/{id}', [BlogController::class, 'update']);
-    Route::delete('/blog/store', [BlogController::class, 'destroy']);
+    Route::delete('/blog/delete/{id}', [BlogController::class, 'destroy']);
 
     Route::get('/master/master-hewan/jenis-kelamin', [MasterJenisKelaminController::class, 'index']);
     Route::post('/master/master-hewan/jenis-kelamin/create', [MasterJenisKelaminController::class, 'store']);
@@ -46,6 +47,7 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::get('/user-settings', [UserSettingsController::class, 'index']);
     Route::post('/user-settings/storeOrUpdate', [UserSettingsController::class, 'storeOrUpdate']);
     Route::get('/user-settings/{username}', [UserSettingsController::class, 'edit']);
+    Route::get('/user-settings/list/list-user', [UserSettingsController::class, 'showList']);
     Route::patch('/user-settings/status/{username}', [UserSettingsController::class, 'status']);
     Route::patch('/user-settings/vet-status/{username}', [UserSettingsController::class, 'vetStatus']);
     Route::delete('/user-settings/delete/{username}', [UserSettingsController::class, 'destroy']);

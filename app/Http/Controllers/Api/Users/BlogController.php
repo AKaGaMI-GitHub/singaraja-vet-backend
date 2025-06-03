@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
-    public function getBlog($type = 'newest', Request $request) {
+    public function getBlog($type = 'newest', Request $request)
+    {
         try {
             $data = Blog::with('komentar', 'author.user_detail')
                 ->select('id', 'user_id', 'judul', 'content', 'views', 'likes', 'slug', 'thumbnail', 'tags', 'created_at');
@@ -33,7 +34,7 @@ class BlogController extends Controller
                 } elseif ($request->to) {
                     $data = $data->whereDate('created_at', '<=', $request->to);
                 }
-                
+
                 if ($request->tags) {
                     $tags = explode(',', $request->tags);
                     $data = $data->where(function ($query) use ($tags) {
@@ -42,14 +43,14 @@ class BlogController extends Controller
                         }
                     });
                 }
-                
+
                 $data = $data->paginate(15);
             } else {
                 Log::error('Gagal mendapatkan data Blog!');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Blog!', ['message' => 'Tipe data tidak valid!'], '0');
                 return APIHelpers::responseAPI(['message' => 'Tipe data tidak valid!'], 400);
             }
-            
+
             Log::info('Berhasil mendapatkan data Blog!');
             return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan data Blog!', 'data' => $data], 200);
         } catch (Exception $error) {
@@ -59,9 +60,13 @@ class BlogController extends Controller
         }
     }
 
-    public function getDetailBlog ($slug) {
+    public function getDetailBlog($slug)
+    {
         try {
             $data = Blog::with('komentar', 'author.user_detail')->where('slug', $slug)->first();
+            $data->update([
+                'views' => $data->views + 1
+            ]);
             $latestBlog = Blog::with('komentar', 'author.user_detail')->orderBy('id', 'DESC')->limit(4)->get();
             Log::info('Berhasil mendapatkan detail Blog!');
             return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan detail Blog!', 'data' => $data, 'latestBlog' => $latestBlog], 200);
