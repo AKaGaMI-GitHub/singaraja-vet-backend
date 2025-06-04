@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
 use App\Models\Pets;
+use App\Models\PetsPhoto;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ListPetsController extends Controller
 {
@@ -21,7 +23,7 @@ class ListPetsController extends Controller
         try {
             $data = Pets::with('owner', 'detail_photo');
 
-            $user = Auth::guard('sanctum')->user;
+            $user = Auth::guard('sanctum')->user();
 
             if ($request->has('keyword')) {
                 $data = $data->where(function ($query) use ($request) {
@@ -41,6 +43,12 @@ class ListPetsController extends Controller
             if ($request->has('jenis_kelamin')) {
                 $data = $data->where('jenis_kelamin_pet', $request->jenis_kelamin);
             }
+
+            if ($user->is_vet == 0) {
+                $data = $data->where('user_id', $user->id);
+            }
+
+            $data = $data->orderBy('id', 'DESC')->paginate(8);
 
             Log::info('Berhasil mendapatkan data list Pets!');
             return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan data list Pets!', 'data' => $data], 200);
@@ -64,7 +72,69 @@ class ListPetsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validate = $request->validate([
+                'user_id' => 'numeric',
+                'nama_depan_pet' => 'required|string',
+                'nama_belakang_pet' => 'required|string',
+                'avatar' => 'required|file|max:2048|mimes:jpeg,jpg,png',
+                'birthday' => 'required|date',
+                'jenis_kelamin_pet' => 'required|in:0,1',
+                'is_alive' => 'required|in:0,1',
+                'alasan_meninggal' => 'nullable|string',
+                'photo.*.photos' => 'required|file|max:5064|mimes:jpeg,jpg,png',
+            ]);
+
+            $checkUser = Auth::guard('sanctum')->user();
+
+            if ($request->hasFile('avatar')) {
+                $img = $validate['avatar']->store('user/pets/avatar', 'public');
+                $data['avatar'] = 'storage/' . $img;
+            }
+
+            if ($checkUser->is_vet == 1) {
+                $userId = $validate['user_id'];
+            } else {
+                $userId = $checkUser->id;
+            }
+
+            $data = [
+                'user_id' => $userId,
+                'nama_depan_pet' => $validate['nama_depan_pet'],
+                'nama_belakang_pet' => $validate['nama_belakang_pet'],
+                'birthday' => $validate[''],
+                'jenis_kelamin_pet' => $validate['jenis_kelamin_pet'],
+                'is_alive' => (string) $validate['is_alive'],
+                'alasan_meninggal' => $validate['alasan_meninggal'],
+            ];
+
+            $storeList = Pets::create($data);
+
+            $listPhoto = [];
+            foreach ($validate['photo'] as $photos) {
+                $img = $photos->store('user/pets/photo', 'public');
+                $pathImg = 'storage/' . $img;
+
+                $photoRecord = PetsPhoto::create([
+                    'pet_id' => $storeList->id,
+                    'photos' => $pathImg
+                ]);
+
+                $listPhoto[] = $photoRecord;
+            }
+
+            Log::info('Berhasil store data Pets');
+            ActivityHelpers::LogActivityHelpers('Berhasil store data Pets', ['data' => $data, 'photo-list' => $listPhoto], '1');
+            return APIHelpers::responseAPI([
+                'data' => $data,
+                'photo-list' => $listPhoto
+            ], 200);
+
+        } catch (Exception $error) {
+            Log::error('Gagal store data Pets!');
+            ActivityHelpers::LogActivityHelpers('Gagal store data Pets!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
     }
 
     /**
@@ -88,7 +158,78 @@ class ListPetsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $validate = $request->validate([
+                'user_id' => 'numeric',
+                'nama_depan_pet' => 'string',
+                'nama_belakang_pet' => 'string',
+                'avatar' => 'file|max:2048|mimes:jpeg,jpg,png',
+                'birthday' => 'date',
+                'jenis_kelamin_pet' => 'in:0,1',
+                'is_alive' => 'in:0,1',
+                'alasan_meninggal' => 'nullable|string',
+                'photo.*.photos' => 'file|max:5064|mimes:jpeg,jpg,png',
+            ]);
+
+            $pet = Pets::findOrFail($id);
+
+            if ($request->hasFile('avatar')) {
+                $img = $request->file('avatar')->store('user/pets/avatar', 'public');
+                $pet->avatar = 'storage/' . $img;
+            }
+
+            $checkUser = Auth::guard('sanctum')->user();
+
+            if ($checkUser->is_vet == 1) {
+                $userId = $validate['user_id'];
+            } else {
+                $userId = $checkUser->id;
+            }
+
+            $data = [
+                'user_id' => $userId,
+                'nama_depan_pet' => $validate['nama_depan_pet'],
+                'nama_belakang_pet' => $validate['nama_belakang_pet'],
+                'birthday' => $validate[''],
+                'jenis_kelamin_pet' => $validate['jenis_kelamin_pet'],
+                'is_alive' => (string) $validate['is_alive'],
+                'alasan_meninggal' => $validate['alasan_meninggal'],
+            ];
+
+            $pet->update($data);
+
+            $listPhoto = [];
+            if ($request->has('photo')) {
+                foreach ($validate['photo'] as $photoItem) {
+                    if (isset($photoItem['photos'])) {
+                        $img = $photoItem['photos']->store('user/pets/photo', 'public');
+                        $pathImg = 'storage/' . $img;
+
+                        $photoRecord = PetsPhoto::create([
+                            'pet_id' => $pet->id,
+                            'photos' => $pathImg,
+                        ]);
+
+                        $listPhoto[] = $photoRecord;
+                    }
+                }
+            }
+
+            Log::info('Berhasil update data Pets');
+            ActivityHelpers::LogActivityHelpers('Berhasil update data Pets', ['data' => $pet, 'photo-list' => $listPhoto], '1');
+
+            return APIHelpers::responseAPI([
+                'data' => $pet,
+                'photo-list' => $listPhoto,
+            ], 200);
+
+        } catch (Exception $error) {
+            Log::error('Gagal update data Pets!', ['error' => $error]);
+            ActivityHelpers::LogActivityHelpers('Gagal update data Pets!', ['message' => $error->getMessage()], '0');
+
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+
     }
 
     /**
@@ -96,6 +237,38 @@ class ListPetsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $pet = Pets::findOrFail($id);
+
+            if ($pet->avatar && Storage::disk('public')->exists(str_replace('storage/', '', $pet->avatar))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $pet->avatar));
+            }
+
+            // Hapus semua foto terkait dari tabel dan storage
+            $photos = PetsPhoto::where('pet_id', $id)->get();
+            foreach ($photos as $photo) {
+                if ($photo->photos && Storage::disk('public')->exists(str_replace('storage/', '', $photo->photos))) {
+                    Storage::disk('public')->delete(str_replace('storage/', '', $photo->photos));
+                }
+                $photo->delete();
+            }
+
+            $pet->delete();
+            Log::info('Berhasil menghapus data Pet', ['id' => $id]);
+            ActivityHelpers::LogActivityHelpers('Berhasil menghapus data Pet', ['pet_id' => $id], '1');
+
+            return APIHelpers::responseAPI([
+                'message' => 'Data pet berhasil dihapus'
+            ], 200);
+
+        } catch (Exception $error) {
+            Log::error('Gagal menghapus data Pet', ['error' => $error->getMessage()]);
+            ActivityHelpers::LogActivityHelpers('Gagal menghapus data Pet', ['message' => $error->getMessage()], '0');
+
+            return APIHelpers::responseAPI([
+                'message' => 'Gagal menghapus data pet',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 }

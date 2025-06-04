@@ -20,9 +20,9 @@ class Authenticated
     {
         try {
             $user = Auth::guard('sanctum')->user();
-            if ($user->is_active == 1) {
+            if ($user && $user->is_active == 1) {
                 return $next($request);
-            } else if ($user->is_active == 0) {
+            } else if ($user && $user->is_active == 0) {
                 return response()->json([
                     'error' => 'Silahkan melengkapi detail identitas anda!'
                 ], 401);
