@@ -57,7 +57,7 @@ class UserSettingsController extends Controller
     public function showList()
     {
         try {
-            $data = User::where('is_vet', '1')->get([
+            $data = User::where('is_active', '1')->get([
                 'id as value',
                 DB::raw("CONCAT(nama_depan, ' ', nama_belakang) as label")
             ]);

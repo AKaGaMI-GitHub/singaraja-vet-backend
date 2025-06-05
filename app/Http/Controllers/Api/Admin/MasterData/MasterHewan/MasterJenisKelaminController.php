@@ -66,7 +66,6 @@ class MasterJenisKelaminController extends Controller
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal store data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal store data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
@@ -93,7 +92,6 @@ class MasterJenisKelaminController extends Controller
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal get data Jenis Kelamin Hewan');
             ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Kelamin Hewan', ['message' => $error->getMessage()], '0');
@@ -126,7 +124,6 @@ class MasterJenisKelaminController extends Controller
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal update data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
@@ -150,7 +147,6 @@ class MasterJenisKelaminController extends Controller
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal merubah status data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');

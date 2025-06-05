@@ -51,7 +51,7 @@ class ListPetsController extends Controller
             $data = $data->orderBy('id', 'DESC')->paginate(8);
 
             Log::info('Berhasil mendapatkan data list Pets!');
-            return APIHelpers::responseAPI(['message' => 'Berhasil mendapatkan data list Pets!', 'data' => $data], 200);
+            return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan data list Pets!');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data list Pets!', ['message' => $error->getMessage()], '0');
@@ -76,8 +76,8 @@ class ListPetsController extends Controller
             $validate = $request->validate([
                 'user_id' => 'numeric',
                 'nama_depan_pet' => 'required|string',
-                'nama_belakang_pet' => 'required|string',
-                'avatar' => 'required|file|max:2048|mimes:jpeg,jpg,png',
+                'nama_belakang_pet' => 'string',
+                'avatar_file' => 'required|file|max:2048|mimes:jpeg,jpg,png',
                 'birthday' => 'required|date',
                 'jenis_kelamin_pet' => 'required|in:0,1',
                 'is_alive' => 'required|in:0,1',
@@ -87,8 +87,8 @@ class ListPetsController extends Controller
 
             $checkUser = Auth::guard('sanctum')->user();
 
-            if ($request->hasFile('avatar')) {
-                $img = $validate['avatar']->store('user/pets/avatar', 'public');
+            if ($request->hasFile('avatar_file')) {
+                $img = $validate['avatar_file']->store('user/pets/avatar', 'public');
                 $data['avatar'] = 'storage/' . $img;
             }
 
@@ -129,7 +129,6 @@ class ListPetsController extends Controller
                 'data' => $data,
                 'photo-list' => $listPhoto
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal store data Pets!');
             ActivityHelpers::LogActivityHelpers('Gagal store data Pets!', ['message' => $error->getMessage()], '0');
@@ -222,14 +221,12 @@ class ListPetsController extends Controller
                 'data' => $pet,
                 'photo-list' => $listPhoto,
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal update data Pets!', ['error' => $error]);
             ActivityHelpers::LogActivityHelpers('Gagal update data Pets!', ['message' => $error->getMessage()], '0');
 
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
-
     }
 
     /**
@@ -260,7 +257,6 @@ class ListPetsController extends Controller
             return APIHelpers::responseAPI([
                 'message' => 'Data pet berhasil dihapus'
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal menghapus data Pet', ['error' => $error->getMessage()]);
             ActivityHelpers::LogActivityHelpers('Gagal menghapus data Pet', ['message' => $error->getMessage()], '0');
