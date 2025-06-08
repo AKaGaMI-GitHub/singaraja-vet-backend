@@ -17,7 +17,7 @@ Route::group(['prefix' => 'user'], function () {
 
         Route::get('/list-pets', [ListPetsController::class, 'index']);
         Route::post('/list-pets/create', [ListPetsController::class, 'store']);
-        Route::post('/list-pets/update/{id}', [ListPetsController::class, 'update']);
+        Route::patch('/list-pets/update/{id}', [ListPetsController::class, 'update']);
         Route::delete('/list-pets/delete/{id}', [ListPetsController::class, 'destroy']);
     
         Route::get('/master-hewan/jenis-kelamin/show-list', [MasterJenisKelaminController::class, 'showList']);

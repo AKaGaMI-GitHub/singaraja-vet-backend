@@ -21,7 +21,7 @@ class ListPetsController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = Pets::with('owner', 'detail_photo');
+            $data = Pets::with('owner', 'detail_photo', 'jenis_hewan');
 
             $user = Auth::guard('sanctum')->user();
 
@@ -38,6 +38,10 @@ class ListPetsController extends Controller
 
             if ($request->has('is_alive')) {
                 $data = $data->where('is_alive', $request->is_alive);
+            }
+
+            if ($request->has('jenis_hewan')) {
+                $data = $data->where('jenis_hewan_id', $request->jenis_hewan);
             }
 
             if ($request->has('jenis_kelamin')) {
@@ -75,6 +79,7 @@ class ListPetsController extends Controller
         try {
             $validate = $request->validate([
                 'user_id' => 'numeric',
+                'jenis_hewan_id' => 'required|numeric',
                 'nama_depan_pet' => 'required|string',
                 'nama_belakang_pet' => 'string',
                 'avatar_file' => 'required|file|max:2048|mimes:jpeg,jpg,png',
@@ -82,15 +87,10 @@ class ListPetsController extends Controller
                 'jenis_kelamin_pet' => 'required|in:0,1',
                 'is_alive' => 'required|in:0,1',
                 'alasan_meninggal' => 'nullable|string',
-                'photo.*.photos' => 'required|file|max:5064|mimes:jpeg,jpg,png',
+                'detail_photo.*.photos_file' => 'required|file|max:5064|mimes:jpeg,jpg,png',
             ]);
 
             $checkUser = Auth::guard('sanctum')->user();
-
-            if ($request->hasFile('avatar_file')) {
-                $img = $validate['avatar_file']->store('user/pets/avatar', 'public');
-                $data['avatar'] = 'storage/' . $img;
-            }
 
             if ($checkUser->is_vet == 1) {
                 $userId = $validate['user_id'];
@@ -98,21 +98,31 @@ class ListPetsController extends Controller
                 $userId = $checkUser->id;
             }
 
+            [$tahun_lahir, $bulan_lahir, $tanggal_lahir] = explode('-', $validate['birthday']);
+
             $data = [
                 'user_id' => $userId,
+                'jenis_hewan_id' => $validate['jenis_hewan_id'],
                 'nama_depan_pet' => $validate['nama_depan_pet'],
                 'nama_belakang_pet' => $validate['nama_belakang_pet'],
-                'birthday' => $validate[''],
+                'tanggal_lahir' => $tanggal_lahir,
+                'bulan_lahir' => $bulan_lahir,
+                'tahun_lahir' => $tahun_lahir,
                 'jenis_kelamin_pet' => $validate['jenis_kelamin_pet'],
                 'is_alive' => (string) $validate['is_alive'],
                 'alasan_meninggal' => $validate['alasan_meninggal'],
             ];
 
+            if ($request->hasFile('avatar_file')) {
+                $img = $validate['avatar_file']->store('user/pets/avatar', 'public');
+                $data['avatar'] = 'storage/' . $img;
+            }
+
             $storeList = Pets::create($data);
 
             $listPhoto = [];
-            foreach ($validate['photo'] as $photos) {
-                $img = $photos->store('user/pets/photo', 'public');
+            foreach ($validate['detail_photo'] as $photos) {
+                $img = $photos['photos_file']->store('user/pets/photo', 'public');
                 $pathImg = 'storage/' . $img;
 
                 $photoRecord = PetsPhoto::create([
@@ -160,22 +170,18 @@ class ListPetsController extends Controller
         try {
             $validate = $request->validate([
                 'user_id' => 'numeric',
-                'nama_depan_pet' => 'string',
+                'jenis_hewan_id' => 'required|numeric',
+                'nama_depan_pet' => 'required|string',
                 'nama_belakang_pet' => 'string',
-                'avatar' => 'file|max:2048|mimes:jpeg,jpg,png',
-                'birthday' => 'date',
-                'jenis_kelamin_pet' => 'in:0,1',
-                'is_alive' => 'in:0,1',
+                'avatar_file' => 'file|max:2048|mimes:jpeg,jpg,png',
+                'birthday' => 'required|date',
+                'jenis_kelamin_pet' => 'required|in:0,1',
+                'is_alive' => 'required|in:0,1',
                 'alasan_meninggal' => 'nullable|string',
-                'photo.*.photos' => 'file|max:5064|mimes:jpeg,jpg,png',
+                'detail_photo.*.photos_file' => 'file|max:5064|mimes:jpeg,jpg,png',
             ]);
 
             $pet = Pets::findOrFail($id);
-
-            if ($request->hasFile('avatar')) {
-                $img = $request->file('avatar')->store('user/pets/avatar', 'public');
-                $pet->avatar = 'storage/' . $img;
-            }
 
             $checkUser = Auth::guard('sanctum')->user();
 
@@ -185,23 +191,33 @@ class ListPetsController extends Controller
                 $userId = $checkUser->id;
             }
 
+            [$tahun_lahir, $bulan_lahir, $tanggal_lahir] = explode('-', $validate['birthday']);
+
             $data = [
                 'user_id' => $userId,
+                'jenis_hewan_id' => $validate['jenis_hewan_id'],
                 'nama_depan_pet' => $validate['nama_depan_pet'],
                 'nama_belakang_pet' => $validate['nama_belakang_pet'],
-                'birthday' => $validate[''],
+                'tanggal_lahir' => $tanggal_lahir,
+                'bulan_lahir' => $bulan_lahir,
+                'tahun_lahir' => $tahun_lahir,
                 'jenis_kelamin_pet' => $validate['jenis_kelamin_pet'],
                 'is_alive' => (string) $validate['is_alive'],
                 'alasan_meninggal' => $validate['alasan_meninggal'],
             ];
 
+            if ($request->hasFile('avatar_file')) {
+                $img = $validate['avatar_file']->store('user/pets/avatar', 'public');
+                $data['avatar'] = 'storage/' . $img;
+            }
+
             $pet->update($data);
 
             $listPhoto = [];
-            if ($request->has('photo')) {
-                foreach ($validate['photo'] as $photoItem) {
-                    if (isset($photoItem['photos'])) {
-                        $img = $photoItem['photos']->store('user/pets/photo', 'public');
+            if ($request->has('detail_photo')) {
+                foreach ($validate['detail_photo'] as $photoItem) {
+                    if (isset($photoItem['photos_file'])) {
+                        $img = $photoItem['photos_file']->store('user/pets/photo', 'public');
                         $pathImg = 'storage/' . $img;
 
                         $photoRecord = PetsPhoto::create([
