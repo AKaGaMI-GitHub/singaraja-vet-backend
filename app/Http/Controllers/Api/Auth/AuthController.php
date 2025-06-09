@@ -33,6 +33,7 @@ class AuthController extends Controller
                     $token = $user->createToken('auth_token')->plainTextToken;
                     Log::info('Login Success');
                     ActivityHelpers::LogActivityHelpers('Login Berhasil!', [
+                        'id' => $user->id,
                         'username' => $user->username,
                         'nama_depan' => $user->nama_depan,
                         'nama_belakang' => $user->nama_belakang,
@@ -42,6 +43,7 @@ class AuthController extends Controller
                         'token' => $token,
                     ], '1');
                     return APIHelpers::responseAPI(['message' => 'Login Berhasil!', 'data' => [
+                        'id' => $user->id,
                         'username' => $user->username,
                         'nama_depan' => $user->nama_depan,
                         'nama_belakang' => $user->nama_belakang,

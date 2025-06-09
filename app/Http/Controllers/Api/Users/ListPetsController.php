@@ -149,17 +149,18 @@ class ListPetsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function showList($id)
     {
-        //
-    }
+        try {
+            $data = Pets::selectRaw("id as value, CONCAT(COALESCE(nama_depan_pet, ''), ' ', COALESCE(nama_belakang_pet, '')) as label")->where('user_id', $id)->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+            Log::info('Berhasil show data Pets!');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal show data Pets!');
+            ActivityHelpers::LogActivityHelpers('Gagal show data Pets!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
     }
 
     /**

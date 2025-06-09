@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanControll
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use App\Http\Controllers\API\Users\BlogController;
 use App\Http\Controllers\Api\Users\ListPetsController;
+use App\Http\Controllers\Api\Users\RekamMedisController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'user'], function () {
@@ -17,9 +18,15 @@ Route::group(['prefix' => 'user'], function () {
 
         Route::get('/list-pets', [ListPetsController::class, 'index']);
         Route::post('/list-pets/create', [ListPetsController::class, 'store']);
+        Route::get('/list-pets/show-list/{id}', [ListPetsController::class, 'showList']);
         Route::patch('/list-pets/update/{id}', [ListPetsController::class, 'update']);
         Route::delete('/list-pets/delete/{id}', [ListPetsController::class, 'destroy']);
-    
+
+        Route::get('/rekam-medis', [RekamMedisController::class, 'index']);
+        Route::post('/rekam-medis/create', [RekamMedisController::class, 'store']);
+        Route::patch('/rekam-medis/update/{id}', [RekamMedisController::class, 'update']);
+        Route::delete('/rekam-medis/delete/{id}', [RekamMedisController::class, 'destroy']);
+
         Route::get('/master-hewan/jenis-kelamin/show-list', [MasterJenisKelaminController::class, 'showList']);
         Route::get('/master-hewan/jenis-hewan/show-list', [MasterJenisHewanController::class, 'showList']);
         Route::get('/master-hewan/jenis-ras-hewan/show-list/{jenis_hewan_id}', [MasterRasHewanController::class, 'showList']);
