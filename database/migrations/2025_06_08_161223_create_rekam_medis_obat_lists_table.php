@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rekam_medis', function (Blueprint $table) {
+        Schema::create('rekam_medis_obat_lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable();
-            $table->foreignId('pet_id')->nullable();
-            $table->string('nama_owner')->nullable();
-            $table->string('nama_pet')->nullable();
-            $table->string('diagnosa');
-            $table->text('penanganan')->nullable();
+            $table->foreignId('rekam_medis_id');
+            $table->foreignId('obat_id');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rekam_medis');
+        Schema::dropIfExists('rekam_medis_obat_lists');
     }
 };
