@@ -21,7 +21,7 @@ class ListPetsController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = Pets::with('owner', 'detail_photo', 'jenis_hewan', 'ras');
+            $data = Pets::with('owner.user_detail', 'detail_photo', 'jenis_hewan', 'jenis_kelamin', 'ras');
 
             $user = Auth::guard('sanctum')->user();
 
