@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('pet_id')->nullable();
+            $table->foreignId('jenis_hewan_id')->nullable();
+            $table->foreignId('ras_id')->nullable();
             $table->string('nama_owner')->nullable();
             $table->string('nama_pet')->nullable();
             $table->string('diagnosa');
             $table->text('penanganan')->nullable();
+            $table->longText('obat');
             $table->timestamps();
         });
     }

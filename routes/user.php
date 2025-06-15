@@ -23,9 +23,6 @@ Route::group(['prefix' => 'user'], function () {
         Route::delete('/list-pets/delete/{id}', [ListPetsController::class, 'destroy']);
 
         Route::get('/rekam-medis', [RekamMedisController::class, 'index']);
-        Route::post('/rekam-medis/create', [RekamMedisController::class, 'store']);
-        Route::patch('/rekam-medis/update/{id}', [RekamMedisController::class, 'update']);
-        Route::delete('/rekam-medis/delete/{id}', [RekamMedisController::class, 'destroy']);
 
         Route::get('/master-hewan/jenis-kelamin/show-list', [MasterJenisKelaminController::class, 'showList']);
         Route::get('/master-hewan/jenis-hewan/show-list', [MasterJenisHewanController::class, 'showList']);

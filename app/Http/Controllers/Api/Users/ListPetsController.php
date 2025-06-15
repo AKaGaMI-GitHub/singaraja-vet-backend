@@ -21,7 +21,7 @@ class ListPetsController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = Pets::with('owner', 'detail_photo', 'jenis_hewan');
+            $data = Pets::with('owner', 'detail_photo', 'jenis_hewan', 'ras');
 
             $user = Auth::guard('sanctum')->user();
 
@@ -80,6 +80,7 @@ class ListPetsController extends Controller
             $validate = $request->validate([
                 'user_id' => 'numeric',
                 'jenis_hewan_id' => 'required|numeric',
+                'ras_id' => 'required|numeric',
                 'nama_depan_pet' => 'required|string',
                 'nama_belakang_pet' => 'nullable|string',
                 'avatar_file' => 'required|file|max:2048|mimes:jpeg,jpg,png',
@@ -103,6 +104,7 @@ class ListPetsController extends Controller
             $data = [
                 'user_id' => $userId,
                 'jenis_hewan_id' => $validate['jenis_hewan_id'],
+                'ras_id' => $validate['ras_id'],
                 'nama_depan_pet' => $validate['nama_depan_pet'],
                 'nama_belakang_pet' => $validate['nama_belakang_pet'],
                 'tanggal_lahir' => $tanggal_lahir,
@@ -172,6 +174,7 @@ class ListPetsController extends Controller
             $validate = $request->validate([
                 'user_id' => 'numeric',
                 'jenis_hewan_id' => 'required|numeric',
+                'ras_id' => 'required|numeric',
                 'nama_depan_pet' => 'required|string',
                 'nama_belakang_pet' => 'nullable|string',
                 'avatar_file' => 'file|max:2048|mimes:jpeg,jpg,png',
@@ -197,6 +200,7 @@ class ListPetsController extends Controller
             $data = [
                 'user_id' => $userId,
                 'jenis_hewan_id' => $validate['jenis_hewan_id'],
+                'ras_id' => $validate['ras_id'],
                 'nama_depan_pet' => $validate['nama_depan_pet'],
                 'nama_belakang_pet' => $validate['nama_belakang_pet'],
                 'tanggal_lahir' => $tanggal_lahir,

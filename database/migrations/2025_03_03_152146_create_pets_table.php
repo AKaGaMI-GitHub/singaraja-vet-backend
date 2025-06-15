@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('jenis_hewan_id');
+            $table->integer('ras_id');
             $table->string('nama_depan_pet');
             $table->string('nama_belakang_pet')->nullable();
             $table->text('avatar')->nullable();

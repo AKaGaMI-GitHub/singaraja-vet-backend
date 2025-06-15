@@ -85,20 +85,18 @@ class MasterObatController extends Controller
     /**
      * Display the specified resource.
      */
-    public function showList($jenis_obat_id)
+    public function showList()
     {
         try {
-            $data = MasterObat::where('is_active', '1')->where('jenis_obat_id', $jenis_obat_id)->get()->map(function ($item) {
+            $data = MasterObat::where('is_active', '1')->get()->map(function ($item) {
                 return [
                     'label' => $item->nama_obat,
-                    'value' => $item->id,
+                    'value' => $item->nama_obat,
                 ];
             });
 
             Log::error('Berhasil get data Jenis Obat');
-            return APIHelpers::responseAPI([
-                'data' => $data
-            ], 200);
+            return APIHelpers::responseAPI($data, 200);
 
         } catch (Exception $error) {
             Log::error('Gagal get data Jenis Obat');

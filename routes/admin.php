@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisKelaminCont
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterJenisObatController;
 use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterObatController;
+use App\Http\Controllers\Api\Admin\RekamMedisController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +52,10 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::patch('/user-settings/status/{username}', [UserSettingsController::class, 'status']);
     Route::patch('/user-settings/vet-status/{username}', [UserSettingsController::class, 'vetStatus']);
     Route::delete('/user-settings/delete/{username}', [UserSettingsController::class, 'destroy']);
+
+    Route::post('/rekam-medis/create', [RekamMedisController::class, 'store']);
+    Route::patch('/rekam-medis/update/{id}', [RekamMedisController::class, 'update']);
+    Route::delete('/rekam-medis/delete/{id}', [RekamMedisController::class, 'destroy']);
 
     Route::get('/log-activity', [LogActivityController::class, 'index']);
 });

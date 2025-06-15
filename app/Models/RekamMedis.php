@@ -11,6 +11,13 @@ class RekamMedis extends Model
 
     protected $guarded = [];
 
+    protected $appends = ['obat_parsed'];
+
+    public function getObatParsedAttribute()
+    {  
+        return json_decode($this->getRawOriginal('obat_parsed'));
+    }
+
     public function pemilik_hewan()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
@@ -23,6 +30,6 @@ class RekamMedis extends Model
 
     public function dokumentasi()
     {
-        return $this->hasMany(RekamMedisPhoto::class, 'id', 'rekam_medis_id');
+        return $this->hasMany(RekamMedisPhoto::class, 'rekam_medis_id', 'id');
     }
 }
