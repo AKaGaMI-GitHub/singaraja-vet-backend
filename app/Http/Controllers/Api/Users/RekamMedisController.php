@@ -21,7 +21,7 @@ class RekamMedisController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = RekamMedis::with('dokumentasi', 'hewan', 'pemilik_hewan.user_detail', 'ras', 'jenis_hewan');
+            $data = RekamMedis::with('dokumentasi', 'hewan.jenis_hewan', 'hewan.ras', 'hewan.jenis_kelamin', 'pemilik_hewan.user_detail', 'ras', 'jenis_hewan');
 
             $user = Auth::guard('sanctum')->user();
 

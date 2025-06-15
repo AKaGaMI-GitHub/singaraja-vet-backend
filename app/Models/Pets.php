@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Master\MasterJenisHewan;
+use App\Models\Master\MasterJenisKelaminHewan;
 use App\Models\Master\MasterRasHewan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,5 +37,10 @@ class Pets extends Model
     public function rekam_medis()
     {
         return $this->hasMany(RekamMedis::class, 'id', 'pet_id');
+    }
+
+    public function jenis_kelamin()
+    {
+        return $this->hasOne(MasterJenisKelaminHewan::class, 'id', 'jenis_kelamin_pet');
     }
 }

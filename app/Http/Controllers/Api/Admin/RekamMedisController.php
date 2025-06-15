@@ -131,8 +131,8 @@ class RekamMedisController extends Controller
                 'pet_id' => $validate['pet_id'],
                 'jenis_hewan_id' => $validate['jenis_hewan_id'] ?? null,
                 'ras_id' => $validate['ras_id'] ?? null,
-                'nama_owner' => $validate['nama_owner'],
-                'nama_pet' => $validate['nama_pet'],
+                'nama_owner' => $validate['nama_owner'] ?? null,
+                'nama_pet' => $validate['nama_pet'] ?? null,
                 'diagnosa' => $validate['diagnosa'],
                 'penanganan' => $validate['penanganan'],
                 'obat' => $validate['obat']
