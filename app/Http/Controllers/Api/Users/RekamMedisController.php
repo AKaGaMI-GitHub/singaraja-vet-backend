@@ -21,7 +21,7 @@ class RekamMedisController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = RekamMedis::with('dokumentasi', 'hewan.jenis_hewan', 'hewan.ras', 'hewan.jenis_kelamin', 'pemilik_hewan.user_detail', 'ras', 'jenis_hewan');
+            $data = RekamMedis::with('dokumentasi', 'hewan.jenis_hewan', 'hewan.ras', 'hewan.jenis_kelamin', 'pemilik_hewan.user_detail', 'ras', 'jenis_hewan', 'ditangani_oleh');
 
             $user = Auth::guard('sanctum')->user();
 
@@ -35,7 +35,7 @@ class RekamMedisController extends Controller
                             $q->whereRaw("CONCAT(nama_depan, ' ', nama_belakang) LIKE ?", ['%' . $request->keyword . '%']);
                         })
                         ->orWhereHas('hewan', function ($q) use ($request) {
-                           $q->whereRaw("CONCAT(nama_depan_pet, ' ', nama_belakang_pet) LIKE ?", ['%' . $request->keyword . '%']);
+                            $q->whereRaw("CONCAT(nama_depan_pet, ' ', nama_belakang_pet) LIKE ?", ['%' . $request->keyword . '%']);
                         });;
                 });
             }
@@ -64,7 +64,7 @@ class RekamMedisController extends Controller
         }
     }
 
-    
+
     /**
      * Display the specified resource.
      */
@@ -72,5 +72,4 @@ class RekamMedisController extends Controller
     {
         //
     }
-    
 }

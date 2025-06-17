@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisKelaminCont
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use App\Http\Controllers\API\Users\BlogController;
+use App\Http\Controllers\Api\Users\DashboardController;
 use App\Http\Controllers\Api\Users\ListPetsController;
 use App\Http\Controllers\Api\Users\RekamMedisController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ Route::group(['prefix' => 'user'], function () {
 
 
     Route::group(['middleware' => 'Authenticated'], function () {
+        Route::get('/dashboard', [DashboardController::class, 'index']);
 
         Route::get('/list-pets', [ListPetsController::class, 'index']);
         Route::post('/list-pets/create', [ListPetsController::class, 'store']);

@@ -46,6 +46,8 @@ class RekamMedisController extends Controller
 
             ]);
 
+            $vetID = Auth::guard('sanctum')->user();
+
             $data = [
                 'user_id' => $validate['user_id'] ?? null,
                 'pet_id' => $validate['pet_id'] ?? null,
@@ -55,7 +57,8 @@ class RekamMedisController extends Controller
                 'nama_pet' => $validate['nama_pet'] ?? null,
                 'diagnosa' => $validate['diagnosa'],
                 'penanganan' => $validate['penanganan'],
-                'obat' => $validate['obat']
+                'obat' => $validate['obat'],
+                'vet_id' => $vetID
             ];
 
             $rekamMedis = RekamMedis::create($data);
@@ -126,6 +129,8 @@ class RekamMedisController extends Controller
                 'photo.*.deskripsi' => 'nullable|string',
             ]);
 
+            $vetID = Auth::guard('sanctum')->user();
+
             $data = [
                 'user_id' => $validate['user_id'],
                 'pet_id' => $validate['pet_id'],
@@ -135,7 +140,8 @@ class RekamMedisController extends Controller
                 'nama_pet' => $validate['nama_pet'] ?? null,
                 'diagnosa' => $validate['diagnosa'],
                 'penanganan' => $validate['penanganan'],
-                'obat' => $validate['obat']
+                'obat' => $validate['obat'],
+                'vet_id' => $vetID
             ];
 
             $rekamMedis = RekamMedis::findOrFail($id);

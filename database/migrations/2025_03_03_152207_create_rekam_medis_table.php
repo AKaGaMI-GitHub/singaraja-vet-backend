@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('diagnosa');
             $table->text('penanganan')->nullable();
             $table->longText('obat');
+            $table->foreignId('vet_id');
             $table->timestamps();
         });
     }
