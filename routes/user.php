@@ -17,6 +17,7 @@ Route::group(['prefix' => 'user'], function () {
 
     Route::group(['middleware' => 'Authenticated'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::patch('/changeAccount', [DashboardController::class, 'changeAccount']);
 
         Route::get('/list-pets', [ListPetsController::class, 'index']);
         Route::post('/list-pets/create', [ListPetsController::class, 'store']);

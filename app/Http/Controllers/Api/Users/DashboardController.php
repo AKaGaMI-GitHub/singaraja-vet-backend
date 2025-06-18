@@ -15,13 +15,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         try {
-            $user = Auth::guard('sanctum')->user();
+            $userID = Auth::guard('sanctum')->id();
+            $user = User::with('user_detail')->where('id', $userID)->first();
 
             $totalHewan = Pets::query();
             $pemeriksaan = RekamMedis::query();
@@ -40,10 +42,12 @@ class DashboardController extends Controller
             return APIHelpers::responseAPI(
                 [
                     'user' => $user,
-                    'totalHewan' => $totalHewan,
-                    'totalPemeriksaan' => $totalPemeriksaan,
-                    'totalBlog' => $totalBlog,
-                    'listPemeriksaan' => $listPemeriksaan
+                    'about' => [
+                        'totalHewan' => $totalHewan,
+                        'totalPemeriksaan' => $totalPemeriksaan,
+                        'totalBlog' => $totalBlog,
+                        'listPemeriksaan' => $listPemeriksaan
+                    ],
                 ],
                 200
             );
@@ -58,10 +62,13 @@ class DashboardController extends Controller
     {
         try {
             $validate = $request->validate([
-                'username' => 'unique:users|required|string|min:5|max:20',
                 'nama_depan' => 'required',
                 'nama_belakang' => 'nullable',
-                'email' => 'unique:users|email',
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('users')->ignore(Auth::guard('sanctum')->id()),
+                ],
                 'password' => 'nullable|string',
                 'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'alamat' => 'required|string',
@@ -75,20 +82,9 @@ class DashboardController extends Controller
             $userID = Auth::guard('sanctum')->id();
 
             $dataUser = [
-                'username' => $validate['username'],
                 'nama_depan' => $validate['nama_depan'],
                 'nama_belakang' => $validate['nama_belakang'],
                 'email' => $validate['email'],
-                'is_active' => '0',
-                'is_vet' => $validate['is_vet'] ?? '0'
-            ];
-
-            $dataDetailUser = [
-                'alamat' => $validate['alamat'],
-                'tempat_lahir' => $validate['tempat_lahir'],
-                'tanggal_lahir' => $validate['tanggal_lahir'],
-                'jenis_kelamin' => (string) $validate['jenis_kelamin'],
-                'mobile' => $validate['mobile_code'] . $validate['mobile'],
             ];
 
             if ($validate['password']) {
@@ -97,8 +93,16 @@ class DashboardController extends Controller
 
             if ($request->hasFile('avatar')) {
                 $img = $validate['avatar']->store('user/avatar', 'public');
-                $dataUser['avatar'] = 'storage' . $img;
+                $dataUser['avatar'] = 'storage/' . $img;
             }
+
+            $dataDetailUser = [
+                'alamat' => $validate['alamat'],
+                'tempat_lahir' => $validate['tempat_lahir'],
+                'tanggal_lahir' => $validate['tanggal_lahir'],
+                'jenis_kelamin' => (string) $validate['jenis_kelamin'],
+                'mobile' => $validate['mobile_code'] . $validate['mobile'],
+            ];
 
             User::where('id', $userID)->update($dataUser);
             UserDetail::where('user_id', $userID)->update($dataDetailUser);
