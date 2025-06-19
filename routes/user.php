@@ -30,5 +30,8 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('/master-hewan/jenis-kelamin/show-list', [MasterJenisKelaminController::class, 'showList']);
         Route::get('/master-hewan/jenis-hewan/show-list', [MasterJenisHewanController::class, 'showList']);
         Route::get('/master-hewan/jenis-ras-hewan/show-list/{jenis_hewan_id}', [MasterRasHewanController::class, 'showList']);
+
+        Route::post('/blog/comment/{slug}', [BlogController::class, 'commentBlogParent']);
+        Route::post('/blog/comment/{slug}/reply/{idParent}', [BlogController::class, 'commentBlogChildren']);
     });
 });

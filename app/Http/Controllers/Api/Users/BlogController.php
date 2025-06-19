@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
 use App\Models\Blog;
+use App\Models\BlogComment;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -18,7 +20,7 @@ class BlogController extends Controller
     {
         try {
             $data = Blog::with('komentar', 'author.user_detail')
-                ->select('id', 'user_id', 'judul', 'content', 'views', 'likes', 'slug', 'thumbnail', 'tags', 'created_at');
+                ->select('id', 'user_id', 'judul', 'content', 'views', 'slug', 'thumbnail', 'tags', 'created_at');
 
             if ($type === 'newest') {
                 $data = $data->orderBy('created_at', 'DESC')->limit(6)->get();
@@ -73,6 +75,53 @@ class BlogController extends Controller
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan detail Blog!');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan detail Blog!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+    }
+
+    public function commentBlogParent($slug, Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'comment' => 'required|string|max:300'
+            ]);
+            $blogID = Blog::where('slug', $slug)->first()->id;
+            $comment = [
+                'blog_id' => $blogID,
+                'user_id' => Auth::guard('sanctum')->id(),
+                'comment' => $validate['comment']
+            ];
+            $data = BlogComment::create($comment);
+            Log::info('Berhasil comment Blog!');
+            ActivityHelpers::LogActivityHelpers('Berhasil comment Blog!', $data, '1');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal comment Blog!');
+            ActivityHelpers::LogActivityHelpers('Gagal comment Blog!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+    }
+
+    public function commentBlogChildren($slug, $idParent, Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'comment' => 'required|string|max:300'
+            ]);
+            $blogID = Blog::where('slug', $slug)->first()->id;
+            $comment = [
+                'blog_id' => $blogID,
+                'parent_comment_id' => $idParent,
+                'user_id' => Auth::guard('sanctum')->id(),
+                'comment' => $validate['comment']
+            ];
+            $data = BlogComment::create($comment);
+            Log::info('Berhasil membalas comment Blog!');
+            ActivityHelpers::LogActivityHelpers('Berhasil membalas comment Blog!', $data, '1');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal membalas comment Blog!');
+            ActivityHelpers::LogActivityHelpers('Gagal membalas comment Blog!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
