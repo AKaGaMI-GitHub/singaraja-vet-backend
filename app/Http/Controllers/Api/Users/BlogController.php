@@ -65,7 +65,7 @@ class BlogController extends Controller
     public function getDetailBlog($slug)
     {
         try {
-            $data = Blog::with('komentar', 'author.user_detail')->where('slug', $slug)->first();
+            $data = Blog::with('komentar.user_comment', 'komentar.balasan', 'author.user_detail')->where('slug', $slug)->first();
             $data->update([
                 'views' => $data->views + 1
             ]);

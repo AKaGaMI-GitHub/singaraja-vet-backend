@@ -25,4 +25,9 @@ class BlogComment extends Model
     {
         return $this->belongsTo(BlogComment::class, 'parent_comment_id');
     }
+
+    public function user_comment()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }
