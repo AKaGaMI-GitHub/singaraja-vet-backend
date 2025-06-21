@@ -41,6 +41,6 @@ class Blog extends Model
     }
 
     public function komentar() {
-        return $this->hasMany(BlogComment::class, 'blog_id', 'id');
+        return $this->hasMany(BlogComment::class, 'blog_id', 'id')->whereNull('parent_comment_id')->orderBy('created_at', 'desc');
     }
 }
