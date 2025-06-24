@@ -67,6 +67,51 @@ class AuthController extends Controller
         }
     }
 
+    public function loginMobile(Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'username' => 'required|max:20',
+                'password' => 'required'
+            ]);
+
+            if (Auth::attempt([
+                'username' => $validate['username'],
+                'password' => $validate['password']
+            ])) {
+                $user = $request->user();
+                if ($user->is_active && $user->is_vet == '1') {
+                    $token = $user->createToken('auth_token')->plainTextToken;
+                    Log::info('Login Success');
+                    ActivityHelpers::LogActivityHelpers('Login Mobile Berhasil!', [
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'nama_depan' => $user->nama_depan,
+                        'nama_belakang' => $user->nama_belakang,
+                        'email' => $user->email,
+                        'avatar' => $user->avatar,
+                        'is_vet' => (string) $user->is_vet,
+                        'token' => $token,
+                    ], '1');
+                    return APIHelpers::responseAPI(['message' => 'Login Mobile Berhasil!', 'data' => [
+                        'id' => $user->id,
+                        'username' => $user->username,
+                        'nama_depan' => $user->nama_depan,
+                        'nama_belakang' => $user->nama_belakang,
+                        'email' => $user->email,
+                        'avatar' => $user->avatar,
+                        'is_vet' => (string) $user->is_vet,
+                        'token' => $token,
+                    ]], 200);
+                }
+            }
+        } catch (Exception $error) {
+            Log::error($error->getMessage());
+            ActivityHelpers::LogActivityHelpers('Gagal Login Mobile!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+    }
+
     public function logout(Request $request)
     {
         try {

@@ -5,6 +5,7 @@ use App\Http\Controllers\API\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login-mobile', [AuthController::class, 'loginMobile']);
 Route::middleware('Authenticated')->post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/login/redirect/{provider}', [AuthController::class, 'redirectToProvider']);
