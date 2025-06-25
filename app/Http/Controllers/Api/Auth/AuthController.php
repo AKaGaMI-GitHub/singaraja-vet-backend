@@ -60,6 +60,10 @@ class AuthController extends Controller
                     return APIHelpers::responseAPI(['message' => 'Akun belum aktif, silahkan melengkapi identitas!'], 401);
                 }
             }
+
+            Log::error('Username dan Password salah!');
+            ActivityHelpers::LogActivityHelpers('Gagal Login!', ['message' => 'Username dan Password salah!'], '0');
+            return APIHelpers::responseAPI(['message' => 'Username dan Password salah!'], 401);
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Login!', ['message' => $error->getMessage()], '0');
