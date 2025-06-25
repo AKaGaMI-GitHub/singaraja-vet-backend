@@ -105,6 +105,10 @@ class AuthController extends Controller
                     ]], 200);
                 }
             }
+
+            Log::error('Username dan Password salah!');
+            ActivityHelpers::LogActivityHelpers('Gagal Login Mobile!', ['message' => 'Username dan Password salah!'], '0');
+            return APIHelpers::responseAPI(['message' => 'Username dan Password salah!'], 401);
         } catch (Exception $error) {
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Login Mobile!', ['message' => $error->getMessage()], '0');
