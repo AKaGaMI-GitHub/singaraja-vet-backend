@@ -22,8 +22,7 @@ class DashboardController extends Controller
     public function index()
     {
         try {
-            $userID = Auth::guard('sanctum')->id();
-            $user = User::with('user_detail')->where('id', $userID)->first();
+            $user = Auth::guard('sanctum')->user();
 
             $totalHewan = Pets::query();
             $pemeriksaan = RekamMedis::query();
@@ -36,24 +35,39 @@ class DashboardController extends Controller
 
             $totalHewan = $totalHewan->count();
             $totalPemeriksaan = $pemeriksaan->count();
-            $listPemeriksaan = $pemeriksaan->with('ditangani_oleh', 'pemilik_hewan', 'hewan')->orderBy('created_at', 'DESC')->limit(5)->get();
+            $listPemeriksaan = $pemeriksaan->with('ditangani_oleh', 'pemilik_hewan', 'hewan.jenis_hewan', 'jenis_hewan')->orderBy('created_at', 'DESC')->limit(5)->get();
 
             Log::info('Berhasil mendapatkan data Dashboard!');
             return APIHelpers::responseAPI(
                 [
-                    'user' => $user,
-                    'about' => [
-                        'totalHewan' => $totalHewan,
-                        'totalPemeriksaan' => $totalPemeriksaan,
-                        'totalBlog' => $totalBlog,
-                        'listPemeriksaan' => $listPemeriksaan
-                    ],
+                    'totalHewan' => $totalHewan,
+                    'totalPemeriksaan' => $totalPemeriksaan,
+                    'totalBlog' => $totalBlog,
+                    'listPemeriksaan' => $listPemeriksaan
                 ],
                 200
             );
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan data Dashboard!');
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Dashboard!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+    }
+
+    public function getUser()
+    {
+        try {
+            $userID = Auth::guard('sanctum')->id();
+            $user = User::with('user_detail')->where('id', $userID)->first();
+
+            Log::info('Berhasil mendapatkan data User!');
+            return APIHelpers::responseAPI(
+                $user,
+                200
+            );
+        } catch (Exception $error) {
+            Log::error('Gagal mendapatkan data User!');
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data User!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
