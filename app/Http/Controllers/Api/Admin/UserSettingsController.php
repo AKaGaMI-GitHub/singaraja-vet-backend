@@ -102,7 +102,7 @@ class UserSettingsController extends Controller
                 'nama_belakang' => 'nullable',
                 'email' => $isUpdate ? '' : 'unique:users|email',
                 'password' => $isUpdate ? 'nullable|string' : 'required|string',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
                 'is_vet' => 'nullable|in:0,1',
                 'alamat' => 'required|string',
                 'tempat_lahir' => 'required|string',

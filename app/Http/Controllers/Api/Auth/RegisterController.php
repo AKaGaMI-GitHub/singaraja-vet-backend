@@ -23,7 +23,7 @@ class RegisterController extends Controller
                 'nama_belakang' => 'nullable',
                 'email' => 'unique:users|email',
                 'password' => 'required|string',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
                 'is_vet' => 'nullable|in:0,1'
             ]);
 

@@ -84,7 +84,7 @@ class DashboardController extends Controller
                     Rule::unique('users')->ignore(Auth::guard('sanctum')->id()),
                 ],
                 'password' => 'nullable|string',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
                 'alamat' => 'required|string',
                 'tempat_lahir' => 'required|string',
                 'tanggal_lahir' => 'required|date',

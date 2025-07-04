@@ -67,7 +67,7 @@ class BlogController extends Controller
                 'judul' => 'required|unique:blogs',
                 'content' => 'required',
                 'tags' => 'required',
-                'thumbnail_file' => 'required|mimes:jpeg,jpg,png|max:2048',
+                'thumbnail_file' => 'required|mimes:jpeg,jpg,png|max:5048',
             ]);
 
             $data = [
@@ -135,7 +135,7 @@ class BlogController extends Controller
                 'judul' => 'required',
                 'content' => 'required',
                 'tags' => 'required',
-                'thumbnail_file' => 'nullable|mimes:jpeg,jpg,png|max:2048',
+                'thumbnail_file' => 'nullable|mimes:jpeg,jpg,png|max:5048',
             ]);
 
             $data = [
