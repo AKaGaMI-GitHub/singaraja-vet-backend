@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Helpers\ImageHelpers;
 use App\Models\Master\MasterJenisHewan;
 use App\Models\Master\MasterJenisKelaminHewan;
 use App\Models\Master\MasterRasHewan;
@@ -13,6 +14,12 @@ class Pets extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute()
+    {
+        return ImageHelpers::ImageCheckerHelpers($this->avatar);
+    }
 
     public function jenis_hewan()
     {
