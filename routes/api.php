@@ -5,7 +5,7 @@ use App\Http\Controllers\API\Auth\RegisterController;
 use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/imageChecker/{path}', [ImageController::class, 'checkImage'])->where('path', '.*');;
+Route::get('/image-checker/{path}', [ImageController::class, 'checkImage'])->where('path', '.*');;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login-mobile', [AuthController::class, 'loginMobile']);
