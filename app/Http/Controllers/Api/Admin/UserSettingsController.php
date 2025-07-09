@@ -61,7 +61,7 @@ class UserSettingsController extends Controller
                 'id as value',
                 DB::raw("CONCAT(nama_depan, ' ', nama_belakang) as label")
             ]);
-            Log::info('Berhasil mendapatkan data list user hhh');
+            Log::info('Berhasil mendapatkan data list user (Admin)');
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan data list user');

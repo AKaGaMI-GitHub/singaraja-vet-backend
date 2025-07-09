@@ -70,6 +70,18 @@ class RekamMedisController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $data = RekamMedis::with('dokumentasi', 'hewan.jenis_hewan', 'hewan.ras', 'hewan.jenis_kelamin', 'pemilik_hewan.user_detail', 'ras', 'jenis_hewan', 'ditangani_oleh')
+                ->findOrFail($id);
+
+            Log::info('Berhasil mendapatkan data detail Rekam Medis');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal mendapatkan data detail Rekam Medis');
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data detail Rekam Medis', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI([
+                'message' => $error->getMessage()
+            ], 500);
+        }
     }
 }
