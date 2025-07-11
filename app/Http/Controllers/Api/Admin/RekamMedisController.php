@@ -41,7 +41,7 @@ class RekamMedisController extends Controller
                 'penanganan' => 'required|string',
                 'obat' => 'required',
                 'dokumentasi' => 'array',
-                'dokumentasi.*.photos_file' => 'required|file|max:5064|mimes:jpeg,jpg,png',
+                'dokumentasi.*.photos_file' => 'required|file|max:51200|mimes:jpeg,jpg,png',
                 'dokumentasi.*.deskripsi' => 'nullable|string',
 
             ]);
@@ -125,7 +125,7 @@ class RekamMedisController extends Controller
                 'penanganan' => 'required|string',
                 'obat' => 'required',
 
-                'photo.*.photos_file' => 'nullable|file|max:5064|mimes:jpeg,jpg,png',
+                'photo.*.photos_file' => 'nullable|file|max:51200|mimes:jpeg,jpg,png',
                 'photo.*.deskripsi' => 'nullable|string',
             ]);
 
