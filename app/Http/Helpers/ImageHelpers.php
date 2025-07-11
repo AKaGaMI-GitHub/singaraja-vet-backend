@@ -13,12 +13,15 @@ class ImageHelpers
             return asset('img/not-found-image.png');
         }
 
-        $fullPath = storage_path('app/public/' . $path);
+        // Hilangkan prefix 'storage/' kalau ada
+        $relativePath = preg_replace('#^storage/#', '', $path);
+
+        $fullPath = storage_path('app/public/' . $relativePath);
 
         if (!File::exists($fullPath)) {
             return asset('img/not-found-image.png');
         }
 
-        return asset('storage/' . $path);
+        return asset('storage/' . $relativePath);
     }
 }
