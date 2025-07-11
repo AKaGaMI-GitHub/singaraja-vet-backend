@@ -46,7 +46,7 @@ class RekamMedisController extends Controller
 
             ]);
 
-            $vetID = Auth::guard('sanctum')->user();
+            $vetID = Auth::guard('sanctum')->user()->id;
 
             $data = [
                 'user_id' => $validate['user_id'] ?? null,
@@ -129,7 +129,7 @@ class RekamMedisController extends Controller
                 'photo.*.deskripsi' => 'nullable|string',
             ]);
 
-            $vetID = Auth::guard('sanctum')->user();
+            $vetID = Auth::guard('sanctum')->user()->id;
 
             $data = [
                 'user_id' => $validate['user_id'],

@@ -52,7 +52,7 @@ class RekamMedisController extends Controller
                 $data = $data->where('user_id', $user->id);
             }
 
-            $data = $data->paginate(8);
+            $data = $data->orderBy('created_at', 'DESC')->paginate(8);
             Log::info('Berhasil mendapatkan data Rekam Medis');
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
