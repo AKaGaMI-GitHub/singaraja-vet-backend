@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Helpers\ImageHelpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,11 +22,13 @@ class UserDetail extends Model
     protected $guarded = [];
     protected $table = 'user_details';
 
-    public function getSocialMediaListAttribute() {
+    public function getSocialMediaListAttribute()
+    {
         return json_decode($this->social_media, true);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class, 'id', 'user_id');
     }
 }

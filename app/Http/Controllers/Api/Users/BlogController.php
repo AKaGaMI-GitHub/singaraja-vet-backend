@@ -46,7 +46,7 @@ class BlogController extends Controller
                     });
                 }
 
-                $data = $data->paginate(15);
+                $data = $data->orderBy('id', 'DESC')->paginate(6);
             } else {
                 Log::error('Gagal mendapatkan data Blog!');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data Blog!', ['message' => 'Tipe data tidak valid!'], '0');

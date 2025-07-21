@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Helpers\ImageHelpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,6 +17,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $appends = ['avatar_photos'];
     protected $guarded = [];
 
     /**
@@ -42,6 +44,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAvatarPhotosAttribute()
+    {
+        return ImageHelpers::ImageCheckerHelpers($this->avatar);
     }
 
     public function user_detail()

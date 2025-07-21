@@ -76,7 +76,6 @@ class BlogController extends Controller
                 'content' => $validate['content'],
                 'tags' => $validate['tags'],
                 'views' => 0,
-                'likes' => 0,
                 'slug' => Str::slug($validate['judul'])
             ];
 

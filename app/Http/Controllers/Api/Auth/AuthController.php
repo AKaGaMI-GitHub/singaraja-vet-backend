@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
+use App\Http\Helpers\ImageHelpers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ class AuthController extends Controller
                 $user = $request->user();
                 if ($user->is_active) {
                     $token = $user->createToken('auth_token')->plainTextToken;
+                    $avatar = ImageHelpers::ImageCheckerHelpers($user->avatar);
                     Log::info('Login Success');
                     ActivityHelpers::LogActivityHelpers('Login Berhasil!', [
                         'id' => $user->id,
@@ -38,7 +40,7 @@ class AuthController extends Controller
                         'nama_depan' => $user->nama_depan,
                         'nama_belakang' => $user->nama_belakang,
                         'email' => $user->email,
-                        'avatar' => $user->avatar,
+                        'avatar' => $avatar,
                         'is_vet' => (string) $user->is_vet,
                         'token' => $token,
                     ], '1');
@@ -48,7 +50,7 @@ class AuthController extends Controller
                         'nama_depan' => $user->nama_depan,
                         'nama_belakang' => $user->nama_belakang,
                         'email' => $user->email,
-                        'avatar' => $user->avatar,
+                        'avatar' => $avatar,
                         'is_vet' => (string) $user->is_vet,
                         'token' => $token,
                     ]], 200);
