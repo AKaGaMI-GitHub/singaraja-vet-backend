@@ -9,6 +9,7 @@ use App\Models\Master\MasterJenisKelaminHewan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MasterJenisKelaminController extends Controller
@@ -49,6 +50,7 @@ class MasterJenisKelaminController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'jenis_kelamin' => 'required',
                 'is_active' => 'required|in:0,1'
@@ -61,13 +63,15 @@ class MasterJenisKelaminController extends Controller
 
             MasterJenisKelaminHewan::create($data);
 
-            Log::error('Berhasil store data Jenis Kelamin Hewan (Admin)');
+            Log::info('Berhasil store data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal store data Jenis Kelamin Hewan (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal store data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
@@ -88,7 +92,7 @@ class MasterJenisKelaminController extends Controller
                 ];
             });
 
-            Log::error('Berhasil get data Jenis Kelamin Hewan');
+            Log::info('Berhasil get data Jenis Kelamin Hewan');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
@@ -107,6 +111,7 @@ class MasterJenisKelaminController extends Controller
     public function update(string $id, Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'jenis_kelamin' => 'required',
                 'is_active' => 'required|in:0,1'
@@ -118,14 +123,15 @@ class MasterJenisKelaminController extends Controller
             ];
 
             MasterJenisKelaminHewan::findOrFail($id)->update($data);
-
-            Log::error('Berhasil update data Jenis Kelamin Hewan (Admin)');
+            Log::info('Berhasil update data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal update data Jenis Kelamin Hewan (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
@@ -139,16 +145,19 @@ class MasterJenisKelaminController extends Controller
     public function status(string $id)
     {
         try {
+            DB::beginTransaction();
             $data = MasterJenisKelaminHewan::findOrFail($id);
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
-            Log::error('Berhasil merubah status data Jenis Kelamin Hewan (Admin)');
+            Log::info('Berhasil merubah status data Jenis Kelamin Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Kelamin Hewan (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal merubah status data Jenis Kelamin Hewan (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Kelamin Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()

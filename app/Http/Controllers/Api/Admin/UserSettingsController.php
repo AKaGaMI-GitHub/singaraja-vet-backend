@@ -44,9 +44,11 @@ class UserSettingsController extends Controller
             $data = $data->orderBy('id', 'DESC')->paginate(8);
 
             Log::info('Berhasil mendapatkan data user');
+            DB::commit();
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             Log::error('Gagal mendapatkan data user');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal mendapatkan data User! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()

@@ -82,6 +82,7 @@ class BlogController extends Controller
     public function commentBlogParent($slug, Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'comment' => 'required|string|max:300'
             ]);
@@ -94,9 +95,11 @@ class BlogController extends Controller
             $data = BlogComment::create($comment);
             Log::info('Berhasil comment Blog!');
             ActivityHelpers::LogActivityHelpers('Berhasil comment Blog!', $data, '1');
+            DB::commit();
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             Log::error('Gagal comment Blog!');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal comment Blog!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
@@ -105,6 +108,7 @@ class BlogController extends Controller
     public function commentBlogChildren($slug, $idParent, Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'comment' => 'required|string|max:300'
             ]);
@@ -117,10 +121,12 @@ class BlogController extends Controller
             ];
             $data = BlogComment::create($comment);
             Log::info('Berhasil membalas comment Blog!');
+            DB::commit();
             ActivityHelpers::LogActivityHelpers('Berhasil membalas comment Blog!', $data, '1');
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
             Log::error('Gagal membalas comment Blog!');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal membalas comment Blog!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }

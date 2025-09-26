@@ -8,6 +8,7 @@ use App\Http\Helpers\APIHelpers;
 use App\Models\Master\MasterJenisHewan;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MasterJenisHewanController extends Controller
@@ -60,7 +61,7 @@ class MasterJenisHewanController extends Controller
 
             MasterJenisHewan::create($data);
 
-            Log::error('Berhasil store data Jenis Hewan (Admin)');
+            Log::info('Berhasil store data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil store data Jenis Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
@@ -87,11 +88,10 @@ class MasterJenisHewanController extends Controller
                 ];
             });
 
-            Log::error('Berhasil get data Jenis Hewan');
+            Log::info('Berhasil get data Jenis Hewan');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal get data Jenis Hewan');
             ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Hewan', ['message' => $error->getMessage()], '0');
@@ -104,9 +104,10 @@ class MasterJenisHewanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $id,Request $request)
+    public function update(string $id, Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'nama_jenis_hewan' => 'required',
                 'is_active' => 'required|in:0,1'
@@ -119,13 +120,15 @@ class MasterJenisHewanController extends Controller
 
             MasterJenisHewan::findOrFail($id)->update($data);
 
-            Log::error('Berhasil update data Jenis Hewan (Admin)');
+            Log::info('Berhasil update data Jenis Hewan (Admin)');
+            DB::commit();
             ActivityHelpers::LogActivityHelpers('Berhasil update data Jenis Hewan (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal update data Jenis Hewan (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal update data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
@@ -139,17 +142,19 @@ class MasterJenisHewanController extends Controller
     public function status(string $id)
     {
         try {
+            DB::beginTransaction();
             $data = MasterJenisHewan::findOrFail($id);
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
-            Log::error('Berhasil merubah status data Jenis Hewan (Admin)');
+            Log::info('Berhasil merubah status data Jenis Hewan (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Hewan (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal merubah status data Jenis Hewan (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Hewan (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()

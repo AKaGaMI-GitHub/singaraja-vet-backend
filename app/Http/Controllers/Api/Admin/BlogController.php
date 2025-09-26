@@ -10,6 +10,7 @@ use App\Models\BlogComment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -63,6 +64,7 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'judul' => 'required|unique:blogs',
                 'content' => 'required',
@@ -87,9 +89,10 @@ class BlogController extends Controller
             Blog::create($data);
 
             ActivityHelpers::LogActivityHelpers('Membuat Blog', $data, '1');
-
+            DB::commit();
             return APIHelpers::responseAPI(['message' => 'Berhasil membuat Blog!', 'data' => $data], 200);
         } catch (Exception $error) {
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Blog!', [
                 'message' => $error->getMessage()
             ], '0');
@@ -130,6 +133,7 @@ class BlogController extends Controller
     public function update(Request $request, string $slug)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'judul' => 'required',
                 'content' => 'required',
@@ -166,12 +170,13 @@ class BlogController extends Controller
             $data['id'] = $blog->id;
 
             ActivityHelpers::LogActivityHelpers('Mengedit Blog', $data, '1');
-
+            DB::commit();
             return APIHelpers::responseAPI([
                 'message' => 'Berhasil merubah Blog!',
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal merubah Blog!', [
                 'message' => $error->getMessage()
             ], '0');
@@ -188,6 +193,7 @@ class BlogController extends Controller
     public function destroy(string $slug)
     {
         try {
+            DB::beginTransaction();
             $data = Blog::where('slug', $slug)->first();
 
             if (!$data) {
@@ -205,8 +211,10 @@ class BlogController extends Controller
             }
             $data->delete();
             ActivityHelpers::LogActivityHelpers('Menghapus Blog', $data, '1');
+            DB::commit();
             return APIHelpers::responseAPI($data, 200);
         } catch (Exception $error) {
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Menghapus Blog', [
                 'message' => $error->getMessage()
             ], '0');

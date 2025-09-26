@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserDetail;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -17,6 +18,7 @@ class RegisterController extends Controller
     public function registerAccount(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'username' => 'unique:users|required|string|min:5|max:20',
                 'nama_depan' => 'required',
@@ -45,9 +47,11 @@ class RegisterController extends Controller
             User::updateOrCreate(['email' => $validate['email']], $data);
             ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account!', $data, '1');
             Log::info('Successfully Create Account');
+            DB::commit();
             return APIHelpers::responseAPI(['message' => 'Berhasil Membuat Account Silahkan Mengisi Data Detail', 'data' => $data], 200);
         } catch (Exception $error) {
             Log::error($error->getMessage());
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal Membuat Account!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }

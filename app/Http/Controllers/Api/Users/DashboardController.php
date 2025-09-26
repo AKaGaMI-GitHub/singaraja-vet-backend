@@ -13,6 +13,7 @@ use App\Models\UserDetail;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -75,6 +76,7 @@ class DashboardController extends Controller
     public function changeAccount(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'nama_depan' => 'required',
                 'nama_belakang' => 'nullable',
@@ -124,9 +126,11 @@ class DashboardController extends Controller
 
             Log::info('Successfully Edit Account');
             ActivityHelpers::LogActivityHelpers('Berhasil Merubah Account!', ['user' => $dataUser, 'detail' => $dataDetailUser], '1');
+            DB::commit();
             return APIHelpers::responseAPI(['user' => $dataUser, 'detail' => $dataDetailUser], 200);
         } catch (Exception $error) {
             Log::error($error->getMessage());
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal Merubah Account!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }

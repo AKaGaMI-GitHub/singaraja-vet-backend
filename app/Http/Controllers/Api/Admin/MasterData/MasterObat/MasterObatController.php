@@ -8,6 +8,7 @@ use App\Http\Helpers\APIHelpers;
 use App\Models\Master\MasterObat;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MasterObatController extends Controller
@@ -52,6 +53,7 @@ class MasterObatController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'jenis_obat_id' => 'required|numeric',
                 'nama_obat' => 'required',
@@ -68,13 +70,15 @@ class MasterObatController extends Controller
 
             MasterObat::create($data);
 
-            Log::error('Berhasil store data Obat (Admin)');
+            Log::info('Berhasil store data Obat (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil store data Obat (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal store data Obat (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal store data Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
@@ -95,9 +99,8 @@ class MasterObatController extends Controller
                 ];
             });
 
-            Log::error('Berhasil get data Jenis Obat');
+            Log::info('Berhasil get data Jenis Obat');
             return APIHelpers::responseAPI($data, 200);
-
         } catch (Exception $error) {
             Log::error('Gagal get data Jenis Obat');
             ActivityHelpers::LogActivityHelpers('Gagal get data Jenis Obat', ['message' => $error->getMessage()], '0');
@@ -113,6 +116,7 @@ class MasterObatController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'jenis_obat_id' => 'required|numeric',
                 'nama_obat' => 'required',
@@ -120,7 +124,7 @@ class MasterObatController extends Controller
                 'is_active' => 'required|in:0,1'
             ]);
 
-             $data = [
+            $data = [
                 'jenis_obat_id' => $validate['jenis_obat_id'],
                 'nama_obat' => $validate['nama_obat'],
                 'deskripsi_obat' => $validate['deskripsi_obat'],
@@ -128,14 +132,15 @@ class MasterObatController extends Controller
             ];
 
             MasterObat::findOrFail($id)->update($data);
-
-            Log::error('Berhasil store data Obat (Admin)');
+            DB::commit();
+            Log::info('Berhasil store data Obat (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil store data Obat (Admin)', ['data' => $data], '1');
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal store data Obat (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal store data Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()
@@ -149,17 +154,19 @@ class MasterObatController extends Controller
     public function status(string $id)
     {
         try {
+            DB::beginTransaction();
             $data = MasterObat::findOrFail($id);
             $data->update(['is_active' => $data->is_active == 1 ? '0' : '1']);
 
-            Log::error('Berhasil merubah status data Jenis Obat (Admin)');
+            Log::info('Berhasil merubah status data Jenis Obat (Admin)');
             ActivityHelpers::LogActivityHelpers('Berhasil merubah status data Jenis Obat (Admin)', ['data' => $data], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data
             ], 200);
-
         } catch (Exception $error) {
             Log::error('Gagal merubah status data Jenis Obat (Admin)');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal merubah status data Jenis Obat (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI([
                 'message' => $error->getMessage()

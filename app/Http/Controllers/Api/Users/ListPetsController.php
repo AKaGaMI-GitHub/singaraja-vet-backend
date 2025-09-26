@@ -10,6 +10,7 @@ use App\Models\PetsPhoto;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,6 +78,7 @@ class ListPetsController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'user_id' => 'numeric',
                 'jenis_hewan_id' => 'required|numeric',
@@ -137,12 +139,14 @@ class ListPetsController extends Controller
 
             Log::info('Berhasil store data Pets');
             ActivityHelpers::LogActivityHelpers('Berhasil store data Pets', ['data' => $data, 'photo-list' => $listPhoto], '1');
+            DB::commit();
             return APIHelpers::responseAPI([
                 'data' => $data,
                 'photo-list' => $listPhoto
             ], 200);
         } catch (Exception $error) {
             Log::error('Gagal store data Pets!');
+            DB::rollBack();
             ActivityHelpers::LogActivityHelpers('Gagal store data Pets!', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
