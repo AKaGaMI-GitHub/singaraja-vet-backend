@@ -137,12 +137,12 @@ class RekamMedisController extends Controller
             $vetID = Auth::guard('sanctum')->user()->id;
 
             $data = [
-                'user_id' => $validate['user_id'],
-                'pet_id' => $validate['pet_id'],
-                'jenis_hewan_id' => $validate['pet_id'] ? null : $validate['jenis_hewan_id'],
-                'ras_id' => $validate['pet_id'] ? null : $validate['ras_id'],
-                'nama_owner' => $validate['user_id'] ? null : $validate['nama_owner'],
-                'nama_pet' => $validate['pet_id'] ? null : $validate['nama_pet'],
+                'user_id' => data_get($validate, 'user_id', null),
+                'pet_id' => data_get($validate, 'pet_id', null),
+                'jenis_hewan_id' => data_get($validate, 'pet_id') ? null : data_get($validate, 'jenis_hewan_id', null),
+                'ras_id' => data_get($validate, 'pet_id') ? null : data_get($validate, 'ras_id', null),
+                'nama_owner' => data_get($validate, 'user_id') ? null : data_get($validate, 'nama_owner', null),
+                'nama_pet' => data_get($validate, 'pet_id') ? null : data_get($validate, 'nama_pet', null),
                 'diagnosa' => $validate['diagnosa'],
                 'penanganan' => $validate['penanganan'],
                 'obat' => $validate['obat'],

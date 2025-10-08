@@ -104,7 +104,7 @@ class UserSettingsController extends Controller
                 'nama_belakang' => 'nullable',
                 'email' => $isUpdate ? '' : 'unique:users|email',
                 'password' => $isUpdate ? 'nullable|string' : 'required|string',
-                'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
+                'avatar_file' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
                 'is_vet' => 'nullable|in:0,1',
                 'alamat' => 'required|string',
                 'tempat_lahir' => 'required|string',
@@ -130,8 +130,8 @@ class UserSettingsController extends Controller
                 $data['password'] = Hash::make($validate['password']);
             }
 
-            if ($request->hasFile('avatar')) {
-                $img = $validate['avatar']->store('user/avatar', 'public');
+            if ($request->hasFile('avatar_file')) {
+                $img = $validate['avatar_file']->store('user/avatar', 'public');
                 $data['avatar'] = 'storage' . $img;
             }
 
@@ -151,12 +151,12 @@ class UserSettingsController extends Controller
 
             UserDetail::updateOrCreate(['user_id' => $userID], $dataDetail);
 
-            Log::info('Berhasil Membuat Account! (Admin)');
-            ActivityHelpers::LogActivityHelpers('Berhasil Membuat Account! (Admin)', ['user' => $data, 'detail' => $dataDetail], '1');
+            Log::info('Berhasil Memanipulasi Account! (Admin)');
+            ActivityHelpers::LogActivityHelpers('Berhasil Memanipulasi Account! (Admin)', ['user' => $data, 'detail' => $dataDetail], '1');
             return APIHelpers::responseAPI(['message' => 'Berhasil Mengolah Data Account!', 'data' => ['user' => $data, 'detail' => $dataDetail]], 200);
         } catch (Exception $error) {
             Log::error($error->getMessage());
-            ActivityHelpers::LogActivityHelpers('Gagal Membuat Account! (Admin)', ['message' => $error->getMessage()], '0');
+            ActivityHelpers::LogActivityHelpers('Gagal Memanipulasi Account! (Admin)', ['message' => $error->getMessage()], '0');
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
