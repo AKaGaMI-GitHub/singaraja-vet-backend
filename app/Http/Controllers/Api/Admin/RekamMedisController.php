@@ -42,8 +42,8 @@ class RekamMedisController extends Controller
                 'diagnosa' => 'required|string',
                 'penanganan' => 'required|string',
                 'obat' => 'required',
-                'dokumentasi' => 'array',
-                'dokumentasi.*.photos_file' => 'required|file|max:51200|mimes:jpeg,jpg,png',
+                'dokumentasi' => 'nullable|array',
+                'dokumentasi.*.photos_file' => 'required_with:dokumentasi.*|file|max:51200|mimes:jpeg,jpg,png',
                 'dokumentasi.*.deskripsi' => 'nullable|string',
 
             ]);
@@ -130,8 +130,9 @@ class RekamMedisController extends Controller
                 'penanganan' => 'required|string',
                 'obat' => 'required',
 
-                'photo.*.photos_file' => 'nullable|file|max:51200|mimes:jpeg,jpg,png',
-                'photo.*.deskripsi' => 'nullable|string',
+                'dokumentasi' => 'nullable|array',
+                'dokumentasi.*.photos_file' => 'required_with:dokumentasi.*|file|max:51200|mimes:jpeg,jpg,png',
+                'dokumentasi.*.deskripsi' => 'nullable|string',
             ]);
 
             $vetID = Auth::guard('sanctum')->user()->id;
@@ -154,8 +155,8 @@ class RekamMedisController extends Controller
             $rekamMedis->update($data);
 
             $listPhoto = [];
-            if ($request->has('photo')) {
-                foreach ($validate['photo'] as $photos) {
+            if ($request->has('dokumentasi')) {
+                foreach ($validate['dokumentasi'] as $photos) {
                     if ($photos['photos_file']) {
                         $img = $photos['photos_file']->store('user/rekam_medis/dokumentasi', 'public');
                         $pathImg = 'storage/' . $img;

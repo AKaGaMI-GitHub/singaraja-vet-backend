@@ -90,7 +90,8 @@ class ListPetsController extends Controller
                 'jenis_kelamin_pet' => 'required',
                 'is_alive' => 'required|in:0,1',
                 'alasan_meninggal' => 'nullable|string',
-                'detail_photo.*.photos_file' => 'required|file|max:5064|mimes:jpeg,jpg,png',
+                'detail_photo' => 'nullable|array',
+                'detail_photo.*.photos_file' => 'required_with:detail_photo.*|nullable|file|max:5064|mimes:jpeg,jpg,png',
             ]);
 
             $checkUser = Auth::guard('sanctum')->user();
@@ -186,7 +187,8 @@ class ListPetsController extends Controller
                 'jenis_kelamin_pet' => 'required',
                 'is_alive' => 'required|in:0,1',
                 'alasan_meninggal' => 'nullable|string',
-                'detail_photo.*.photos_file' => 'file|max:5064|mimes:jpeg,jpg,png',
+                'detail_photo' => 'nullable|array',
+                'detail_photo.*.photos_file' => 'required_with:detail_photo.*|nullable|file|max:5064|mimes:jpeg,jpg,png',
             ]);
 
             $pet = Pets::findOrFail($id);
