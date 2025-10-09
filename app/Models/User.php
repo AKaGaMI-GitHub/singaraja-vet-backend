@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RekamMedis::class, 'id', 'user_id');
     }
+
+    public function chat_room()
+    {
+        return $this->hasOne(ChatRoom::class, 'id', 'user_id');
+    }
 }
