@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Users;
 
+use App\Events\NewMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
@@ -33,21 +34,26 @@ class ChatController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = ChatRoom::where('user_id', $id)->latest();
-            $uuid = $data->room_id;
-            if ($data == null) {
+             $existingRoom = ChatRoom::where('user_id', $id)->latest()->first();
+        
+            $uuid = null;
+            
+            if ($existingRoom == null) {
                 $newRoom = ChatRoom::create([
                     'room_id' => Str::uuid(),
                     'user_id' => $id
                 ]);
-                $uuid += $newRoom->room_id;
+                $uuid = $newRoom->room_id;
                 Log::info('Berhasil membuat chat room!');
                 ActivityHelpers::LogActivityHelpers('Berhasil membuat chat room!', $newRoom, '1');
+            } else {
+                $uuid = $existingRoom->room_id;
             }
+
+            DB::commit();
             $message = ChatMessage::with('user')->where('room_id', $uuid)->first();
             Log::info('Berhasil direction ke chat room!');
             ActivityHelpers::LogActivityHelpers('Berhasil direction chat room!', $message, '1');
-            DB::commit();
             return APIHelpers::responseAPI($message, 200);
         } catch (Exception $error) {
             Log::error('Gagal membuat chat room baru!');
@@ -78,10 +84,16 @@ class ChatController extends Controller
             }
 
             $newMessage = ChatMessage::create($data);
-
-
+            broadcast(new NewMessage($data));
+            Log::info('Berhasil send new message!');
+            ActivityHelpers::LogActivityHelpers('Berhasil send new message!', $newMessage, '1');
             DB::commit();
+            return APIHelpers::responseAPI($newMessage, 200);
         } catch (Exception $error) {
+            DB::rollBack();
+            Log::info('Gagal send new message!');
+            ActivityHelpers::LogActivityHelpers('Gagal send new message!', ['message' => $error->getMessage()], '1');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
 

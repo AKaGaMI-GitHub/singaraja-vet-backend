@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterJenisKelaminCont
 use App\Http\Controllers\Api\Admin\MasterData\MasterHewan\MasterRasHewanController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
 use App\Http\Controllers\API\Users\BlogController;
+use App\Http\Controllers\Api\Users\ChatController;
 use App\Http\Controllers\Api\Users\DashboardController;
 use App\Http\Controllers\Api\Users\ListPetsController;
 use App\Http\Controllers\Api\Users\RekamMedisController;
@@ -35,5 +36,10 @@ Route::group(['prefix' => 'user'], function () {
 
         Route::post('/blog/comment/{slug}', [BlogController::class, 'commentBlogParent']);
         Route::post('/blog/comment/{slug}/reply/{idParent}', [BlogController::class, 'commentBlogChildren']);
+
+        Route::get('/chat/rooms/{id}', [ChatController::class, 'listRoom']);
+        Route::post('/chat/rooms/{id}', [ChatController::class, 'newRoom']);
+        Route::post('/chat/messages/{uuid}', [ChatController::class, 'sendMessage']);
+        Route::get('/chat/rooms/detail/{uuid}', [ChatController::class, 'detailRoom']);
     });
 });
