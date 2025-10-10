@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use App\Http\Helpers\ImageHelpers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ChatMessage extends Model
 {
-    //
-    protected $appends = ['file_attach'];
+    use HasFactory;
+
+    protected $guarded = [];
+
+    protected $appends = ['file_url'];
 
     public function getFileUrlAttribute()
     {

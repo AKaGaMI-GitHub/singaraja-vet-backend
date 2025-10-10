@@ -12,6 +12,7 @@
         "php": "^8.2",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^12.00",
+        "laravel/reverb": "^1.6",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.20",
         "laravel/tinker": "^2.9",

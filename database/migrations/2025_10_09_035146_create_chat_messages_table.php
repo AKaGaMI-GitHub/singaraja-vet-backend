@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->id();
-            $table->integer('room_id');
+            $table->string('room_id');
             $table->integer('user_id');
             $table->string('message');
             $table->longText('file_attach')->nullable();

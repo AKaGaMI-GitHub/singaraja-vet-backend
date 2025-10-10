@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterJenisObatControll
 use App\Http\Controllers\Api\Admin\MasterData\MasterObat\MasterObatController;
 use App\Http\Controllers\Api\Admin\RekamMedisController;
 use App\Http\Controllers\Api\Admin\UserSettingsController;
+use App\Http\Controllers\Api\Users\ChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
@@ -56,6 +57,8 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::post('/rekam-medis/create', [RekamMedisController::class, 'store']);
     Route::patch('/rekam-medis/update/{id}', [RekamMedisController::class, 'update']);
     Route::delete('/rekam-medis/delete/{id}', [RekamMedisController::class, 'destroy']);
+
+    Route::get('/chat/rooms', [ChatController::class, 'listRoom']);
 
     Route::get('/log-activity', [LogActivityController::class, 'index']);
 });

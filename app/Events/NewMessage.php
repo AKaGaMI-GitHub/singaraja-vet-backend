@@ -14,14 +14,14 @@ class NewMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
+    public $message;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($data)
+    public function __construct($message)
     {
-        $this->data = $data;
+        $this->message = $message;
     }
 
     /**
@@ -32,7 +32,24 @@ class NewMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('singaraja-vet-chat'),
+            new PrivateChannel('chat.' . $this->message->room_id),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'message.new';
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'id' => $this->message->id,
+            'room_id' => $this->message->room_id,
+            'user_id' => $this->message->user_id,
+            'message' => $this->message->message,
+            'file_attach' => $this->message->file_attach,
+            'created_at' => $this->message->created_at->toDateTimeString(),
         ];
     }
 }
