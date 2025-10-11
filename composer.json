@@ -16,7 +16,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.20",
         "laravel/tinker": "^2.9",
-        "pusher/pusher-php-server": "^7.2",
         "stevebauman/location": "^7.5"
     },
     "require-dev": {
