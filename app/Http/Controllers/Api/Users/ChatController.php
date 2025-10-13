@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Users;
 
+use App\Events\ChatRoomList;
 use App\Events\NewMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
@@ -17,10 +18,26 @@ use Illuminate\Support\Str;
 
 class ChatController extends Controller
 {
-    public function listRoom()
+    public function index()
     {
         try {
-            $room = ChatRoom::with('user')->get();
+            $user = Auth::guard('sanctum')->user();
+            if ($user->is_vet == 1) {
+                return Self::listRoom();
+            } else {
+                return Self::newRoom($user->id);
+            }
+        } catch (Exception $error) {
+            Log::error('Gagal mengakses chat! Error : ' . $error->getMessage());
+            ActivityHelpers::LogActivityHelpers('Gagal mengakses chat!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['status_room' => false, 'message' => $error->getMessage()], 500);
+        }
+    }
+
+    private function listRoom()
+    {
+        try {
+            $room = ChatRoom::getListRoomChat();
             Log::info('Berhasil mengecek chat room!');
             return APIHelpers::responseAPI($room, 200);
         } catch (Exception $error) {
@@ -30,7 +47,7 @@ class ChatController extends Controller
         }
     }
 
-    public function newRoom($id)
+    private function newRoom($id)
     {
         try {
             DB::beginTransaction();
@@ -85,6 +102,19 @@ class ChatController extends Controller
 
             $newMessage = ChatMessage::create($data);
             broadcast(new NewMessage($newMessage))->toOthers();
+
+            $roomUsers = ChatRoom::where('room_id', $uuid)
+                ->where('user_id', '!=', Auth::guard('sanctum')->user()->id)
+                ->get();
+
+            foreach ($roomUsers as $room) {
+                broadcast(new ChatRoomList(
+                    $uuid,
+                    $newMessage,
+                    $room->user_id
+                ));
+            }
+
             Log::info('Berhasil send new message!');
             ActivityHelpers::LogActivityHelpers('Berhasil send new message!', $newMessage, '1');
             DB::commit();

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
+Broadcast::channel('send-message.{roomId}', function ($user, $roomId) {
     return \App\Models\ChatRoom::where('uuid', $roomId)
         ->where(function ($query) use ($user) {
             $query->where('user_id', $user->id)

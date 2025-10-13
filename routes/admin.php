@@ -58,7 +58,5 @@ Route::group(['middleware' => 'VetCheck', 'prefix' => 'admin'], function () {
     Route::patch('/rekam-medis/update/{id}', [RekamMedisController::class, 'update']);
     Route::delete('/rekam-medis/delete/{id}', [RekamMedisController::class, 'destroy']);
 
-    Route::get('/chat/rooms', [ChatController::class, 'listRoom']);
-
     Route::get('/log-activity', [LogActivityController::class, 'index']);
 });

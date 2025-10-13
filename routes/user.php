@@ -37,7 +37,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('/blog/comment/{slug}', [BlogController::class, 'commentBlogParent']);
         Route::post('/blog/comment/{slug}/reply/{idParent}', [BlogController::class, 'commentBlogChildren']);
 
-        Route::post('/chat/rooms/{id}', [ChatController::class, 'newRoom']);
+        Route::get('/chat', [ChatController::class, 'index']);
         Route::post('/chat/messages/{uuid}', [ChatController::class, 'sendMessage']);
         Route::get('/chat/rooms/detail/{uuid}', [ChatController::class, 'detailRoom']);
     });

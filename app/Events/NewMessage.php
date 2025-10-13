@@ -32,7 +32,7 @@ class NewMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.' . $this->message->room_id),
+            new PrivateChannel('send-message.' . $this->message->room_id),
         ];
     }
 
