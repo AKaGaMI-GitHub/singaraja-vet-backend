@@ -68,10 +68,9 @@ class ChatController extends Controller
             }
 
             DB::commit();
-            $message = ChatMessage::with('user')->where('room_id', $uuid)->get();
             Log::info('Berhasil direction ke chat room!');
-            ActivityHelpers::LogActivityHelpers('Berhasil direction chat room!', $message, '1');
-            return APIHelpers::responseAPI($message, 200);
+            ActivityHelpers::LogActivityHelpers('Berhasil direction chat room!', ['room_id' => $uuid], '1');
+            return APIHelpers::responseAPI(['room_id' => $uuid], 200);
         } catch (Exception $error) {
             Log::error('Gagal membuat chat room baru!');
             ActivityHelpers::LogActivityHelpers('Gagal membuat chat room baru!', ['message' => $error->getMessage()], '0');
