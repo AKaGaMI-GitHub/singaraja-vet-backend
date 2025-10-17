@@ -129,7 +129,7 @@ class ChatController extends Controller
     public function detailRoom($uuid)
     {
         try {
-            $data = ChatMessage::with('user')->where('room_id', $uuid)->first();
+            $data = ChatMessage::with('user')->where('room_id', $uuid)->get();
             if ($data === null) {
                 Log::error('Gagal mendapatkan detail room');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan detail room chat!', ['message' => 'Room chat tidak ditemukan!'], '0');
