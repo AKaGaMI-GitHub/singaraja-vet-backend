@@ -101,18 +101,7 @@ class ChatController extends Controller
 
             $newMessage = ChatMessage::create($data);
             broadcast(new NewMessage($newMessage))->toOthers();
-
-            $roomUsers = ChatRoom::where('room_id', $uuid)
-                ->where('user_id', '!=', Auth::guard('sanctum')->user()->id)
-                ->get();
-
-            foreach ($roomUsers as $room) {
-                broadcast(new ChatRoomList(
-                    $uuid,
-                    $newMessage,
-                    $room->user_id
-                ));
-            }
+            broadcast(new ChatRoomList());
 
             Log::info('Berhasil send new message!');
             ActivityHelpers::LogActivityHelpers('Berhasil send new message!', $newMessage, '1');

@@ -17,6 +17,8 @@ class ChatRoom extends Model
             'user',
             'lastMessage.user'
         ])
+            ->withMax('message', 'created_at') // ambil waktu terakhir dari relasi message
+            ->orderByDesc('message_max_created_at') // urutkan berdasarkan waktu terakhir pesan
             ->get()
             ->map(function ($room) {
                 return [
