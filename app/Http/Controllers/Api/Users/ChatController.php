@@ -132,4 +132,22 @@ class ChatController extends Controller
             return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
         }
     }
+
+    public function ownerRoom($uuid)
+    {
+        try {
+            $data = ChatRoom::with('user')->where('room_id', $uuid)->first();
+            if ($data === null) {
+                Log::error('Gagal mendapatkan owner room');
+                ActivityHelpers::LogActivityHelpers('Gagal mendapatkan owner room chat!', ['message' => 'Room chat tidak ditemukan!'], '0');
+                return APIHelpers::responseAPI(['message' => 'Room chat tidak ditemukan!'], 500);
+            }
+            Log::info('Berhasil mendapatkan owner room');
+            return APIHelpers::responseAPI($data, 200);
+        } catch (Exception $error) {
+            Log::error('Gagal mendapatkan owner room, Error : ' . $error->getMessage());
+            ActivityHelpers::LogActivityHelpers('Gagal mendapatkan owner room chat!', ['message' => $error->getMessage()], '0');
+            return APIHelpers::responseAPI(['message' => $error->getMessage()], 500);
+        }
+    }
 }

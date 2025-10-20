@@ -40,5 +40,6 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('/chat', [ChatController::class, 'index']);
         Route::post('/chat/messages/{uuid}', [ChatController::class, 'sendMessage']);
         Route::get('/chat/rooms/detail/{uuid}', [ChatController::class, 'detailRoom']);
+        Route::get('/chat/rooms/owner/{uuid}', [ChatController::class, 'ownerRoom']);
     });
 });
