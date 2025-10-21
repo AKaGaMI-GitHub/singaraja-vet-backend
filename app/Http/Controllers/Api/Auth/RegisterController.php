@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\ActivityHelpers;
 use App\Http\Helpers\APIHelpers;
+use App\Models\ChatRoom;
 use App\Models\User;
 use App\Models\UserDetail;
 use Exception;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -60,6 +62,7 @@ class RegisterController extends Controller
     public function accountDetail(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validate = $request->validate([
                 'username' => 'required',
                 'alamat' => 'required|string',
@@ -88,11 +91,18 @@ class RegisterController extends Controller
 
             UserDetail::updateOrCreate(['user_id' => $userID], $data);
 
+            //ketika sudah selesai create user otomatis create room chat
+            ChatRoom::create([
+                'room_id' => Str::uuid(),
+                'user_id' => $userID
+            ]);
+
             Log::info('Successfully Create Detail Account!');
             ActivityHelpers::LogActivityHelpers('Berhasil Melengkapi Biodata Account!', $data, '0');
-
+            DB::commit();
             return APIHelpers::responseAPI(['message' => 'Berhasil Melengkapi Biodata Account!', 'data' => $data], 200);
         } catch (Exception $error) {
+            DB::rollBack();
             Log::error($error->getMessage());
             ActivityHelpers::LogActivityHelpers('Gagal Melengkapkan Biodata Account!', [
                 'message' => $error->getMessage()
