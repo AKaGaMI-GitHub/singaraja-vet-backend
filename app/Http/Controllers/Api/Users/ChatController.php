@@ -137,6 +137,7 @@ class ChatController extends Controller
     {
         try {
             $data = ChatRoom::with('user')->where('room_id', $uuid)->first();
+            
             if ($data === null) {
                 Log::error('Gagal mendapatkan owner room');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan owner room chat!', ['message' => 'Room chat tidak ditemukan!'], '0');
