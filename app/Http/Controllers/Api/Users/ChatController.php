@@ -85,7 +85,7 @@ class ChatController extends Controller
             DB::beginTransaction();
             $validate = $request->validate([
                 'message' => 'required|string|min:1',
-                'file' => 'nullable|file|mimes:jpeg,jpg,png|max:5048'
+                'file' => 'nullable|file|mimes:jpeg,jpg,png|max:20480'
             ]);
 
             $data = [
@@ -137,7 +137,7 @@ class ChatController extends Controller
     {
         try {
             $data = ChatRoom::with('user')->where('room_id', $uuid)->first();
-            
+
             if ($data === null) {
                 Log::error('Gagal mendapatkan owner room');
                 ActivityHelpers::LogActivityHelpers('Gagal mendapatkan owner room chat!', ['message' => 'Room chat tidak ditemukan!'], '0');
